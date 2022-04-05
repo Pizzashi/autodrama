@@ -1,6 +1,6 @@
 class Drama
 {
-    ; Return value is an array that is: [dramaTitle, dramaAirDate, dramaStatus, totalEpisodes, oRawEpisodes[], urlDramaImage]
+    ; Return value is an array that is: [dramaTitle, dramaAirDate, dramaStatus, totalEpisodes, oRawEpisodes[], urlDramaImage, oDownloadLinks]
     getPageInfo(url)
     {
         Log.Add("Drama.getPageInfo(): Getting the drama info for: " . url)
@@ -14,6 +14,7 @@ class Drama
         rgxEpisodeRaw  = sUO)class="episodeRaw".+(Episode\s\b\d+\b).+<\/li>
         oRawEpisodes  := []
         oDramaInfo    := []
+        oDownloadLinks:= []
         ;==================================================
 
         ; Check the UrlDownloadToFile in documentation for this code
@@ -41,6 +42,19 @@ class Drama
             dramaStatus := oDramaStatus.Value(1)
         StrReplace(webPage, rgxEpisodeSub,, subbedEpisodes)     ; Assign the total number of subbed episodes to subbedEpisodes
 
+        ; The drama is a movie, not a show (series)
+        if (subbedEpisodes = 1) {
+            RegExMatch(webPage, "sUO)class=""episodeSub"".+href=""(\/.+\d)""", oMatchedLink)
+            oDownloadLinks.Push(baseDomain . oMatchedLink.Value(1) . "?LaunchedByAutodrama")
+        }
+        else {
+            Loop % subbedEpisodes
+            {
+                RegExMatch(webPage, "O)rel=""noreferrer noopener""\shref=""(\/[^<>]+Episode-" A_Index "\?id=\d+)""", oMatchedLink)
+                oDownloadLinks.Push(baseDomain . oMatchedLink.Value(1) . "?LaunchedByAutodrama")
+            }
+        }
+
         ; Assigns the total number of raw episodes to rawEpisodes
         ; and also assigns the list of raw episodes in the array oRawEpisodes[]
         rawEpisodes := 0
@@ -50,7 +64,6 @@ class Drama
             webPage := StrReplace(webpage, oFoundRawEpisode.Value(0)) ; Deletes the found string from the drama page
             rawEpisodes++
         }
-
         totalEpisodes := rawEpisodes + subbedEpisodes
 
         if (networkError) {
@@ -58,8 +71,8 @@ class Drama
             return "networkError"
         }
 
-        ; return value array is [dramaTitle, dramaAirDate, dramaStatus, totalEpisodes, oRawEpisodes[], urlDramaImage]
-        oDramaInfo := [dramaTitle, dramaAirDate, dramaStatus, totalEpisodes, oRawEpisodes, urlDramaImage]
+        ; return value array is [dramaTitle, dramaAirDate, dramaStatus, totalEpisodes, oRawEpisodes[], urlDramaImage, oDownloadLinks]
+        oDramaInfo := [dramaTitle, dramaAirDate, dramaStatus, totalEpisodes, oRawEpisodes, urlDramaImage, oDownloadLinks]
         return oDramaInfo
     }
     
@@ -90,7 +103,7 @@ class Drama
         } else {
             rawEpisodes := "All episodes are subbed."
         }
-      
+
         Gui, MainK:New, ParentMain -Caption
         Gui, MainK:Add, Picture, x20 y0 w150 h195, % "DownloadedImages\kdrama_banner.jpg"
         Gui, MainK:Font, s14, Segoe UI
@@ -110,5 +123,16 @@ class Drama
         return (downloadError) ? 1 : 0
     }
 
-    
+    allLinksUp(oDownloadLinks)
+    {
+        Loop % oDownloadLinks.Length()
+        {
+            if !(oDownloadLinks[A_Index]) {
+                Log.Add("ERROR: allLinksUp() found an empty download link.")
+                return 0
+            }
+        }
+
+        return 1
+    }
 }

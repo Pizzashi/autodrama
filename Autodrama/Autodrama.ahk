@@ -20,6 +20,7 @@ ListLines Off
 #Include Lib\Dll.ahk
 #Include Lib\GDI.ahk
 #Include Drama.ahk
+#Include Window.ahk
 #Include GetDownloadFolders.ahk
 #Include Remark.ahk
 #Include Log.ahk
@@ -59,17 +60,15 @@ szSearch := Dll.Read(Search, "resources.dll", "Images", "search.png")
 , szDramaPlacehldr := Dll.Read(DramaPlaceHldr, "resources.dll", "Images", "drama_placeholder.png")
 , hBitmapDramaPlacehldr := GDI.hBitmapFromBuffer(DramaPlaceHldr, szDramaPlacehldr)
 GDI.Commence("Shutdown")
-
 ;========== End Load resources from dll for the gui ============
 
 Gui, Main:New, HwndhMainGui, Autodrama
-;Gui, Main:Add, Progress, h500 w1 x400 BackgroundBlack
 ;===================== Left side of the GUI =====================
 ;================= Drama Link ===================
 Gui, Main:Add, Text, x20 y10 w200 h30 HwndhDramaLinkText c287882, % "Drama Link"
 Gui, Main:Font, s10, Segoe UI
 Gui, Main:Add, ComboBox, x20 y+5 w315 vDramaLink, % "https://kissasian.li/Drama/Kamen-Rider-Saber-Transformation-Secret-of-Seven-Riders-Special-Issue|one|two|three|four|five"
-Gui, Main:Add, Picture, x+10 yp-5 w35 h35 HwndhSearchIcon gSearchDrama 0x20E
+Gui, Main:Add, Picture, x+10 yp-5 w35 h35 HwndhSearchIcon vSearchIcon gSearchDrama 0x20E
 GDI.LoadFont(hDramaLinkText, TitleFont)
 GDI.LoadPicture(hSearchIcon, hBitmapSearch)
 ;================== Options =====================
@@ -87,11 +86,11 @@ Gui, Main2:Add, Text, x+10 yp+0, % "from"
 Gui, Main2:Add, Edit, x+10 yp-3 w40 vDownloadStart number,
 Gui, Main2:Add, Text, x+10 yp+3, % "to"
 Gui, Main2:Add, Edit, x+10 yp-3 w40 vDownloadEnd number,
-Gui, Main2:Show, x0 y240 hide
+Gui, Main2:Show, x0 y260 hide
 ;=== END Child GUI  ======================
 GDI.LoadFont(hOptionsText, TitleFont)
 ;=================  Download ===================
-Gui, Main:Add, Button, x20 y250 w360 h40 disabled HwndhDownloadText, % "Download"
+Gui, Main:Add, Button, x20 y300 w360 h40 disabled vDownloadButton HwndhDownloadText, % "Download"
 GDI.LoadFont(hDownloadText, TitleFont)
 
 ;===================== Right side of the GUI =====================
@@ -134,11 +133,6 @@ Gui, Main:Add, Button, x75 y+5 w250, % "Upload log to Baconfry-sama"
 
 Gui, Main:Show, h500 w800
 
-;Sleep, 2000
-;GuiControl, MainR:, DramaImage, kdrama.jpg
-
-
-;Gosub, CheckFiles
 return
 
 SearchDrama:
@@ -155,6 +149,7 @@ SearchDrama:
         return
     }
 
+    Window.disableInput()
     Remark.Update("Working..."
                 , "Getting the drama info, please wait..."
                 , "Blue")
@@ -166,6 +161,7 @@ SearchDrama:
                     , "The application cannot download the drama information due to network problems, please try again."
                     , "Red"
                     , 1)
+        Window.enableInput()
         return
     }
 
@@ -174,12 +170,25 @@ SearchDrama:
         Remark.Update("Got the drama information, but..."
                     , "The Drama image could not be downloaded successfully. Please try searching again."
                     , "808000")
+        Window.enableInput()
+        return
     }
-    else {
-        Remark.Update("Got the drama information!"
-                    , "Look at the drama details. If this is the drama that you intend to download, then modify the Options and hit download!"
-                    , "Green")
+    
+    oDownloadLinks := oDramaInfo[7]
+    if !(Drama.allLinksUp(oDownloadLinks)) {
+        Remark.Update("One of the episode links cannot be reached."
+                    , "Looks like not all episodes have valid links. Please try searching for the drama again."
+                    , "808000")
+        Window.enableInput()
+        return   
     }
+    
+    Remark.Update("Got the drama information!"
+                , "Look at the drama details. If this is the drama that you intend to download, then modify the Options and hit download!"
+                , "Green")
+    Window.enableInput()
+    Window.enableDownload()
+    Log.Add("Successfully processed drama information and download links.")
 
     
 
@@ -206,6 +215,11 @@ SearchDrama:
     ;DownloadType := (DownloadType = "Download chosen episodes") ? "Download from episode " . DownloadStart . " to " . DownloadEnd : DownloadType
     ;RecordToLog("Download type: " . DownloadType, 0)
     ;RecordToLog("On download finish: " . OnFinish, 0)
+return
+
+DownloadDrama:
+    Gui, Main:Submit, NoHide
+    
 return
 
 ChangeDownloadType:
