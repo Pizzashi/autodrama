@@ -15,7 +15,7 @@ function onError(error) {
 	let dramaName = $("a:contains('information')").text().match(/Drama\s+(.*?)\s+information/)[1];
 	let pageTimeOut = $('body:contains("Gateway time-out")').length;
 	
-	let movieDramaType = window.location.href.includes("Movie?") ? 1 : 0;
+	let movieDramaType = window.location.href.includes("Movie?")
 
 	// Page is dead
 	if (pageTimeOut) {
