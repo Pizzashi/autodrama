@@ -47,17 +47,22 @@ function CredentialsReady()
 	});
 }
 
-{
-	// Check if just logged in
-	if (window.location.pathname == "/") {
-		LoginChecker();
-	}
 
-	// Login when needed
-	// if id="topHolderBox" contains "Please [login or register]"
+const LAUNCHED_BY_AUTODRAMA = window.location.href.match(/\?LaunchedByAutodrama/)
+
+// Check if just logged in
+if (window.location.pathname == "/") {
+	LoginChecker();
+}
+
+// Login when needed (i.e., Autodrama requested the page AND
+// if id="topHolderBox" contains "Please [login or register]")
+
+if (LAUNCHED_BY_AUTODRAMA)
+{
 	let userNotLoggedIn = $("#topHolderBox:contains('Please')").length;
 	let loginLink = $("a:contains('login')");
-	
+
 	if (userNotLoggedIn) {
 		if (window.location.pathname == "/Login") {
 			FillOutCredentials();
