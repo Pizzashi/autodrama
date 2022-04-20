@@ -3,8 +3,9 @@
 ;@Ahk2Exe-SetMainIcon Main.ico
 ;@Ahk2Exe-SetCopyright Copyright © 2022 Baconfry
 ;@Ahk2Exe-SetCompanyName Furaico
-;@Ahk2Exe-SetVersion 0.1
+;@Ahk2Exe-SetVersion 0.2
 ;===========================================================;
+global AUTODRAMA_VERSION := "0.2"
 
 #NoEnv
 SetBatchLines, -1
@@ -17,31 +18,42 @@ ListLines Off
 #KeyHistory 0
 */
 
+#Include aria2\aria2.ahk
+#Include aria2\httpPost.ahk
+#Include aria2\Jxon.ahk
 #Include Lib\Dll.ahk
 #Include Lib\GDI.ahk
+#Include Download.ahk
 #Include Drama.ahk
-#Include Window.ahk
-#Include GetDownloadFolders.ahk
-#Include Remark.ahk
-#Include Log.ahk
 #Include ErrorHandling.ahk
+#Include ExitFunction.ahk
+#Include GetDownloadFolders.ahk
+#Include Helper.ahk
+#Include Log.ahk
+#Include Remark.ahk
+#Include Window.ahk
 
 Log.Init()
 
 if !FileExist("resources.dll")
     FatalError("resources.dll not found! Try redownloading the app.")
+if !FileExist("aria2c.exe")
+    FatalError("aria2c.exe not found! Try redownloading the app.")
 ; Check for necessary files (aria2c, YA AINT NUFFIN LIKE A HOUND DOG)
 
 
-global FIREFOX_DOWNLOAD_PATH := GetFirefoxDownloadFolder()
+Process, Exist ; Retrieve the script's PID
+global AUTODRAMA_PID := ErrorLevel ; The script's PID is in ErrorLevel
+     , FIREFOX_DOWNLOAD_PATH := GetFirefoxDownloadFolder()
      , USER_DOWNLOAD_PATH    := GetUserDownloadFolder()
      , MOVIE_DOWNLOAD_PATH   := USER_DOWNLOAD_PATH . "\Video\"
+     , oAriaDownloadLinks := []
+
 
 ; Delete old .autodramatext files
 FileDelete, %FIREFOX_DOWNLOAD_PATH%\*.autodramatext
-; Delete the app's AppData folder
-
-; Wait for firefox to close before resetting the CredentialsReady flag
+; Delete the app's old images folder
+FileRemoveDir, DownloadedImages, 1
 
 ;========== Start Load resources from dll for the gui ==========
 ;================= FONTS =================
@@ -62,12 +74,12 @@ szSearch := Dll.Read(Search, "resources.dll", "Images", "search.png")
 GDI.Commence("Shutdown")
 ;========== End Load resources from dll for the gui ============
 
-Gui, Main:New, HwndhMainGui, Autodrama
+Gui, Main:New, HwndhMainGui, % "Autodrama v" . AUTODRAMA_VERSION
 ;===================== Left side of the GUI =====================
 ;================= Drama Link ===================
 Gui, Main:Add, Text, x20 y10 w200 h30 HwndhDramaLinkText c287882, % "Drama Link"
 Gui, Main:Font, s10, Segoe UI
-Gui, Main:Add, ComboBox, x20 y+5 w315 vDramaLink, % "https://kissasian.li/Drama/Kamen-Rider-Saber-Transformation-Secret-of-Seven-Riders-Special-Issue|one|two|three|four|five"
+Gui, Main:Add, ComboBox, x20 y+5 w315 vDramaLink, % "https://kissasian.li/Drama/Kamen-Rider-Saber-Transformation-Secret-of-Seven-Riders-Special-Issue|https://kissasian.li/Drama/Crazy-Love|two|three|four|five"
 Gui, Main:Add, Picture, x+10 yp-5 w35 h35 HwndhSearchIcon vSearchIcon gSearchDrama 0x20E
 GDI.LoadFont(hDramaLinkText, TitleFont)
 GDI.LoadPicture(hSearchIcon, hBitmapSearch)
@@ -90,8 +102,12 @@ Gui, Main2:Show, x0 y260 hide
 ;=== END Child GUI  ======================
 GDI.LoadFont(hOptionsText, TitleFont)
 ;=================  Download ===================
-Gui, Main:Add, Button, x20 y300 w360 h40 disabled vDownloadButton HwndhDownloadText, % "Download"
-GDI.LoadFont(hDownloadText, TitleFont)
+Gui, Main:Add, Button, x20 y260 w360 h40 disabled gDownloadDrama vDownloadBtn HwndhDownloadBtn, % "Download"
+Gui, Main:Add, Button, x20 y+10 w175 h40 disabled gDownloadDrama vResumeDownloadBtn HwndhResumeDownloadBtn, % "Resume Downloads"
+Gui, Main:Add, Button, x+10 yp+0 w175 h40 disabled gDownloadDrama vPauseDownloadBtn HwndhPauseDownloadBtn, % "Pause Downloads"
+GDI.LoadFont(hDownloadBtn, TitleFont)
+GDI.LoadFont(hResumeDownloadBtn, HeaderFont)
+GDI.LoadFont(hPauseDownloadBtn, HeaderFont)
 
 ;===================== Right side of the GUI =====================
 Gui, Main:Add, Text, x420 y10 w200 h30 HwndhInformationText c287882, % "Information"
@@ -100,7 +116,7 @@ GDI.LoadFont(hInformationText, TitleFont)
 
 ;================ Placeholder Right side of the GUI ===============
 Gui, MainR:New, ParentMain -Caption
-Gui, MainR:Add, Picture, x20 y0 w150 h195 vDramaImage HwndhDramaImage 0x20E
+Gui, MainR:Add, Picture, x20 y0 w150 h195 border vDramaImage HwndhDramaImage 0x20E
 Gui, MainR:Font, s14, Segoe UI
 Gui, MainR:Add, Text, x+10 yp+0 w200, % "Search a drama to see its details"
 Gui, MainR:Font, s11, Segoe UI
@@ -132,8 +148,11 @@ Gui, Main:Add, Button, x75 y+5 w250, % "Upload log to Baconfry-sama"
 */
 
 Gui, Main:Show, h500 w800
-
+OnExit("ExitFunction")
 return
+
+#Include HelperLabels.ahk
+#Include DownloadLabels.ahk
 
 SearchDrama:
     Gui, Main:Submit, NoHide
@@ -150,19 +169,40 @@ SearchDrama:
     }
 
     Window.disableInput()
+    Window.disableDownload()
     Remark.Update("Working..."
                 , "Getting the drama info, please wait..."
                 , "Blue")
 
     oDramaInfo := Drama.getPageInfo(DramaLink)
-
     if (oDramaInfo = "networkError") {
         Remark.Update("Error! Error! Error!"
                     , "The application cannot download the drama information due to network problems, please try again."
                     , "Red"
                     , 1)
+        Window.disableDownload()
         Window.enableInput()
         return
+    }
+    else if (oDramaInfo = "pageNotFound") {
+        Remark.Update("Error! The requested link was not found on the server!"
+                    , "It looks like the drama link you entered is incorrect, or does not exist on the server. Try copying the entire link again."
+                    , "Red"
+                    , 1)
+        Log.Add("ERROR: Badet has input an invalid drama link. DramaLink: " . DramaLink)
+        Window.disableDownload()
+        Window.enableInput()
+        return
+    }
+
+    oDownloadLinks := oDramaInfo[7]
+    if !(Drama.allLinksUp(oDownloadLinks)) {
+        Remark.Update("One of the episode links cannot be reached."
+                    , "Looks like not all episodes have valid links. Please try searching for the drama again."
+                    , "808000")
+        Window.disableDownload()
+        Window.enableInput()
+        return   
     }
 
     eBuildError := Drama.buildDramaInfoGUI(oDramaInfo)
@@ -170,56 +210,63 @@ SearchDrama:
         Remark.Update("Got the drama information, but..."
                     , "The Drama image could not be downloaded successfully. Please try searching again."
                     , "808000")
+        Window.disableDownload()
         Window.enableInput()
         return
     }
     
-    oDownloadLinks := oDramaInfo[7]
-    if !(Drama.allLinksUp(oDownloadLinks)) {
-        Remark.Update("One of the episode links cannot be reached."
-                    , "Looks like not all episodes have valid links. Please try searching for the drama again."
-                    , "808000")
-        Window.enableInput()
-        return   
-    }
-    
+    ; Everything looks good!
     Remark.Update("Got the drama information!"
                 , "Look at the drama details. If this is the drama that you intend to download, then modify the Options and hit download!"
                 , "Green")
+    Log.Add("Successfully processed drama information and download links.")
     Window.enableInput()
     Window.enableDownload()
-    Log.Add("Successfully processed drama information and download links.")
-
-    
-
-
-    /*
-            MOVE THIS BLOCK TO DOWNLOAD GOSUB
-            if (DownloadType = "Download chosen episodes" && DownloadStart > DownloadEnd) {
-                invalidInput := 1
-                Remark.updText("Badet you so USELESSSSSS. The starting episode is greater than the end episode! MAS DAKO ANG DOWNLOAD START KAYSA DOWNLOAD END. TRY AGAIN.")
-                Log.Add("ERROR: Badet set has set a greater starting episode than ending episode")
-                return
-            }
-            if ( DownloadType = "Download chosen episodes" && (!(DownloadStart) || !(DownloadEnd)) ) {
-                invalidInput := 1
-                Remark.updText("Useless silly Badet. You haven't chosen episodes yet.")
-                Log.Add("ERROR: Badet set has set a greater starting episode than ending episode")
-                ;RecordToLog("USELESS BADET. PAGPILI UG EPISODES KUNG ASA TAMAN.`r`nTRY AGAIN.", 0, 1)
-                return
-            }
-    */
-    ;===============================================
-    
-    ;RecordToLog("Downloading: " . DramaLink, 0)
-    ;DownloadType := (DownloadType = "Download chosen episodes") ? "Download from episode " . DownloadStart . " to " . DownloadEnd : DownloadType
-    ;RecordToLog("Download type: " . DownloadType, 0)
-    ;RecordToLog("On download finish: " . OnFinish, 0)
 return
 
 DownloadDrama:
     Gui, Main:Submit, NoHide
+    Gui, Main2:Submit, NoHide
     
+    ; Check for invalid input
+    if (DownloadType = "Download chosen episodes") {
+        if ( (DownloadStart > DownloadEnd)
+          || (!(DownloadStart) || !(DownloadEnd))
+          || (DownloadStart < 1)
+          || (DownloadEnd > oDownloadLinks.Length()) ) {
+            Remark.Update("There's an error on the chosen download range."
+                        , "You useless badet. Recheck your chosen download episodes. Dapat mas gamay ang ""from"" kaysa ""to"". Take note nga dili pwede apilon ang mga raw kay dili kabalo mag Korean si mather you useless egg."
+                        , "Red"
+                        , 1)
+            Log.Add("ERROR: Badet has screwed up on choosing the download episodes."
+                    . "`nDownloadStart: " DownloadStart
+                    . "`nDownloadEnd: " DownloadEnd
+                    . "`nMaximum episode: " oDownloadLinks.Length())
+            return
+        }
+    }
+
+    Window.disableDownload()
+    Window.disableOptions()
+
+    ; Modify oDownloadLinks if user chose to download chosen episodes
+    ; Do not append this code to the previous if-statement, this is not checking for invalid input
+    if (DownloadType = "Download chosen episodes") {
+        beginLen := (DownloadStart - 1)
+        oDownloadLinks.RemoveAt(1, beginLen)
+
+        endStart := (DownloadEnd - DownloadStart + 2)
+        endLen := (oDownloadLinks.Length() - endStart + 1)
+        oDownloadLinks.RemoveAt(endStart, endLen)
+    }
+
+    global DRAMA_FOLDER := MOVIE_DOWNLOAD_PATH . Download.makeWinFriendly(oDramaInfo[1] . " (" . oDramaInfo[2] . ")")
+    ; From this point, the Remarks.Update code will be written in the Helper and Download classes
+    ; Check if Aria can be started
+    if !Download.startAria()
+        return
+    ; Start download process
+    Helper.readyCredentials()
 return
 
 ChangeDownloadType:
@@ -229,39 +276,6 @@ ChangeDownloadType:
     } else {
         Gui, Main2:Hide
     }
-return
-
-CheckFiles:
-    Loop, Files, D:\Users\bacon\Downloads\*.autodramatext, R
-    {
-        foundSignal := A_LoopFileFullPath
-        Gosub, ProcessHelperSignal
-        break
-    }
-return
-
-ProcessHelperSignal:
-    FileRead, fileContents, %foundSignal%
-    FileDelete, %foundSignal%
-    ; if fileContents = creds
-
-    ; movieFolder
-
-    movieFolder := """" . MOVIE_DOWNLOAD_PATH . "Twenty-Five Twenty-One (2022)" . """"
-
-    Loop, Parse, tempContents, |
-    {
-        if (A_Index = 1)
-            episodeName := """" . A_LoopField . ".mp4" . """"
-        if (A_Index = 2)
-            downloadLink := """" . A_LoopField . """"
-    }
-
-    ; TO-DO: Add a folder per series
-    RunWait, %ComSpec% /c title Downloading %episodeName% && "C:\Users\bacon\Desktop\Temp\AHK\Autodrama\__res\aria2-1.36.0-win-32bit-build1\aria2c.exe" --console-log-level=warn -d %movieFolder% -o %episodeName% %downloadLink%, , Min
-
-    if FileExist(movieFolder . "\" . episodeName)
-        Msgbox, yaaay
 return
 
 MainGuiClose:

@@ -10,12 +10,16 @@ function onError(error) {
 	console.log(`Error: ${error}`);
 }
 
-{
+function crawlPage() {
+	const LAUNCHED_BY_AUTODRAMA = window.location.href.match(/\?LaunchedByAutodrama/)
 	let oDownloadPage = $("a:contains('CLICK HERE TO DOWNLOAD')");
 	let dramaName = $("a:contains('information')").text().match(/Drama\s+(.*?)\s+information/)[1];
 	let pageTimeOut = $('body:contains("Gateway time-out")').length;
 	
 	let movieDramaType = window.location.href.includes("Movie?")
+
+	if (!LAUNCHED_BY_AUTODRAMA)
+		return
 
 	// Page is dead
 	if (pageTimeOut) {
@@ -65,3 +69,5 @@ function onError(error) {
 		window.close(); // Only works if dom.allow_scripts_to_close_windows is set to true
 	}
 }
+
+crawlPage()

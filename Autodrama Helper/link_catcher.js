@@ -13,18 +13,37 @@ function GetResults()
     var href720 = $("a:contains('720')").attr('href');
     var href1080 = $("a:contains('1080')").attr('href');
     directDownloadLink = href360 || href480 || href720 || href1080 || "no_download_link";
+    
+    SaveResults(directDownloadLink);
+}
+
+function SaveResults(ddl)
+{
+    // Some sort of error handling; in this case it's when the internet is slow
+    // and the website has not finished building the download links yet
+    if (ddl == "no_download_link")
+    {
+        if ($(".is-success")[0]) {
+            // If there is an is-success class, it means a download link is present
+            // Therefore, we should try scanning the page again after two seconds
+            setTimeout(GetResults, 2000);
+            return
+        }
+    }
 
     // Retrieve local storage
     var pageHref = window.location.href;
     var gettingItem = browser.storage.local.get(pageHref);
     gettingItem.then((res) => {
-      whatEpisode = res[pageHref];
-      SaveToDisk(whatEpisode + "|" + directDownloadLink, whatEpisode + ".autodramatext", 1);
+        whatEpisode = res[pageHref];
+        SaveToDisk(whatEpisode + "|" + ddl, whatEpisode + ".autodramatext", 1);
     });
 }
 
 // Waits for $(document).ready()
-$("#download").trigger('click');
+//$("#download").trigger('click');
+
+document.getElementById("download").click();
 // Wait for at least 12 seconds to check for errors
 // Error message/download link should appear by 10 seconds after clicking
 setTimeout(GetResults, 12000)

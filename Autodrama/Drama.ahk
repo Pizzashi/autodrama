@@ -5,16 +5,17 @@ class Drama
     {
         Log.Add("Drama.getPageInfo(): Getting the drama info for: " . url)
         ;=============== static Variables =================
-        rgxBaseDomain  = https:\/\/kissasian\.\w+
-        rgxDramaImage  = sUO)class="col cover">.+src="(.+)"
-        rgxDramaTitle  = UO)<title>\s+\t(.+)\sEnglish Sub
-        rgxAirDate     = O)Date aired:<\/span>&nbsp;.+,\s(\d{4})
-        rgxDramaStatus = O)Status:<\/span>&nbsp;(.+)\s+<\/p>
-        rgxEpisodeSub  = class="episodeSub"
-        rgxEpisodeRaw  = sUO)class="episodeRaw".+(Episode\s\b\d+\b).+<\/li>
-        oRawEpisodes  := []
-        oDramaInfo    := []
-        oDownloadLinks:= []
+        static rgxPageNotFound := "<title>\s+Error!\s+<\/title>"
+        , rgxBaseDomain   := "https:\/\/kissasian\.\w+"
+        , rgxDramaImage   := "sUO)class=""col cover"">.+src=""(.+)"""
+        , rgxDramaTitle   := "UO)<title>\s+\t(.+)\sEnglish Sub"
+        , rgxAirDate      := "O)Date aired:<\/span>&nbsp;.+,\s(\d{4})"
+        , rgxDramaStatus  := "O)Status:<\/span>&nbsp;(.+)\s+<\/p>"
+        , rgxEpisodeSub   := "class=""episodeSub"""
+        , rgxEpisodeRaw   := "sUO)class=""episodeRaw"".+(Episode\s\b\d+\b).+<\/li>"
+        oRawEpisodes    := []
+        , oDramaInfo      := []
+        ,oDownloadLinks  := []
         ;==================================================
 
         ; Check the UrlDownloadToFile in documentation for this code
@@ -31,6 +32,10 @@ class Drama
             networkError := 1
         }
         
+        
+        if RegExMatch(webPage, rgxPageNotFound)                 ; Check if the page does not exist on the domain
+            return "pageNotFound"
+
         RegExMatch(url, rgxBaseDomain, baseDomain)              ; Assign https://kissasian.* to baseDomain
         RegExMatch(webPage, rgxDramaImage, oDramaImage)         ; Assign the path of the drama image relative to the base domain to oDramaImage.Value(1)
             urlDramaImage := baseDomain . oDramaImage.Value(1)
@@ -41,6 +46,9 @@ class Drama
         RegExMatch(webPage, rgxDramaStatus, oDramaStatus)       ; Assign the drama status (i.e., Ongoing or Completed) to oDramaStatus.Value(1)
             dramaStatus := oDramaStatus.Value(1)
         StrReplace(webPage, rgxEpisodeSub,, subbedEpisodes)     ; Assign the total number of subbed episodes to subbedEpisodes
+
+        if (!dramaAirDate || !dramaStatus)
+            networkError := 1
 
         ; The drama is a movie, not a show (series)
         if (subbedEpisodes = 1) {
@@ -105,7 +113,7 @@ class Drama
         }
 
         Gui, MainK:New, ParentMain -Caption
-        Gui, MainK:Add, Picture, x20 y0 w150 h195, % "DownloadedImages\kdrama_banner.jpg"
+        Gui, MainK:Add, Picture, x20 y0 w150 h195 border, % "DownloadedImages\kdrama_banner.jpg"
         Gui, MainK:Font, s14, Segoe UI
         Gui, MainK:Add, Text, x180 yp+0 w200, % dramaTitle
         Gui, MainK:Font, s11, Segoe UI

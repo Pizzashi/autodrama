@@ -9,7 +9,7 @@ GetUserDownloadFolder()
     DllCall("ole32\CoTaskMemFree", "ptr", ppath)
     VarSetCapacity(downloads, (261 + !A_IsUnicode) << !!A_IsUnicode)
     DllCall("ExpandEnvironmentStrings", "Str", dir, "Str", downloads, "UInt", 260)
-    return downloads
+    return LTrim(RTrim(downloads, """"),"""") ; Trims the " from the leftmost and rightmost
 }
 
 GetFirefoxDownloadFolder()
@@ -45,6 +45,7 @@ GetFirefoxDownloadFolder()
         if RegExMatch(foundPref, "O)" . dwnldPathRegex, oMatch)
         {
             dwnldPath := StrReplace(oMatch.Value(1), "\\", "\")
+            dwnldPath := LTrim(RTrim(dwnldPath, """"),"""") ; Trims the " from the leftmost and rightmost
         }
     }
 
