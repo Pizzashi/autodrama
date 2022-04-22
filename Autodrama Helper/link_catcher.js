@@ -1,10 +1,18 @@
+function BeforeCompleteGetResults()
+{
+    var eTooManyReqs = $('h1:contains("429 Too Many Requests")').length;
+    if (eTooManyReqs) {
+        location.reload();
+        return
+    }
+}
+
 function GetResults()
 {
     var eNoDownload = $('button:contains("Sorry, no download available")').length;
-    var eTooManyReqs = $('h1:contains("429 Too Many Requests")').length;
     var eServiceUnavail = $('h1:contains("503 Service Temporarily Unavailable")').length;
     
-    if (eNoDownload || eTooManyReqs || eServiceUnavail) {
+    if (eNoDownload || eServiceUnavail) {
         location.reload();
         return
     }
@@ -45,6 +53,9 @@ function ClickDownload()
 {
     $("#download").trigger('click');
 }
+
+// Detect errors that appear immediately on page load
+BeforeCompleteGetResults()
 
 // Waits for $(document).ready()
 // Wait 3 seconds before clicking
