@@ -6,6 +6,7 @@ function GetResults()
     
     if (eNoDownload || eTooManyReqs || eServiceUnavail) {
         location.reload();
+        return
     }
 
     var href360 = $("a:contains('360')").attr('href');
@@ -40,10 +41,15 @@ function SaveResults(ddl)
     });
 }
 
-// Waits for $(document).ready()
-//$("#download").trigger('click');
+function ClickDownload()
+{
+    $("#download").trigger('click');
+}
 
-document.getElementById("download").click();
-// Wait for at least 12 seconds to check for errors
+// Waits for $(document).ready()
+// Wait 3 seconds before clicking
+setTimeout(ClickDownload, 3000)
+
+// Wait for at least 15 seconds to check for errors
 // Error message/download link should appear by 10 seconds after clicking
-setTimeout(GetResults, 12000)
+setTimeout(GetResults, 15000)
