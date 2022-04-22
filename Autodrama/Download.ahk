@@ -27,7 +27,7 @@ class Download
         Loop % oDownloadLinks.Length()
         {
             Run, % oDownloadLinks[A_Index]
-            Sleep, 2000
+            Sleep, 1000
         }
     }
 
@@ -40,14 +40,12 @@ class Download
             , "Blue")
 
         local SCRT_TOKEN := "xRyEkIylIPAxgw9Yo6NNnpvajNvAHRZPqvS1lwgrOXX9K6pNlSdBQt4w4y73pYfL"
-        /*
-            global_options := "max-concurrent-downloads=2`n"
+            , global_options := "max-concurrent-downloads=2`r`n"
                             . "max-overall-download-limit=500K"
-        */
-        , global_options := "max-concurrent-downloads=2"
+        ;, global_options := "max-concurrent-downloads=2"
         , oGlobalOptions := this.Options2obj(global_options)
 
-        Run, %ComSpec% /c aria2c.exe --enable-rpc --rpc-listen-all --rpc-secret=%SCRT_TOKEN% --stop-with-process=%AUTODRAMA_PID% -c,, UseErrorLevel, pidAria
+        Run, %ComSpec% /c aria2c.exe --enable-rpc --rpc-listen-all --rpc-secret=%SCRT_TOKEN% --stop-with-process=%AUTODRAMA_PID% -c,, Hide UseErrorLevel, pidAria
         if (ErrorLevel) {
             Log.Add("ERROR: Download.startAria(): Aria2c could not be started.")
             Remark.Update("Error! Error! Error!"
@@ -80,7 +78,9 @@ class Download
             return
         }
 
-        ; Got everything
+        ;===================Got everything===================
+        Run, % "https://kissasian.li/?AutodramaIsFinished" ; This will close the main window
+
         if !IsObject(gidList)
             gidList := []
         SetTimer, CheckFiles, Off

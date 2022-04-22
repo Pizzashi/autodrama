@@ -38,15 +38,17 @@ UpdateStatus:
 		if (failedRetries > 100)
 		{
 			Remark.Update("The download has failed!"
-					, "Your internet may be slow, the app cannot download the episodes. Try again later."
+					, "The app cannot download the files, your internet may be slow or disconnected. Try again later."
 					, "Red"
 					, 1)
 			Log.Add("ERROR: UpdateStatus cannot download episodes due to problems (failedRetries exceeded 100 times).")
+			
+			failedRetries := 0
 			aria2.forceShutdown()
 			SetTimer, UpdateStatus, Off
 			return
 		}
-
+		failedRetries++
         Remark.Update("Preparing to download files..."
                 , "Please wait as the app prepares your downloads."
                 , "Blue")
@@ -59,7 +61,7 @@ UpdateStatus:
                 , "Successfully downloaded " COMPLETED_DOWNLOADS " file(s). There were " FAILED_DOWNLOADS " failed download(s).`n"
                 . "Click this text to open the download folder."
                 , "Green")
-		Log.Add("UpdateStatus: Successfully downloaded " COMPLETED_DOWNLOADS "file(s). There were " FAILED_DOWNLOADS " failed download(s).")
+		Log.Add("UpdateStatus: Successfully downloaded " COMPLETED_DOWNLOADS " file(s). There were " FAILED_DOWNLOADS " failed download(s).")
 		GuiControl, Main:+g, RemarkText, LaunchDownloadFolder
 		SetTimer, UpdateStatus, Off
     
