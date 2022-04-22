@@ -173,6 +173,7 @@ SearchDrama:
     Remark.Update("Working..."
                 , "Getting the drama info, please wait..."
                 , "Blue")
+    Log.Add("SearchDrama: Searching for drama...")
 
     oDramaInfo := Drama.getPageInfo(DramaLink)
     if (oDramaInfo = "networkError") {
@@ -246,6 +247,7 @@ DownloadDrama:
         }
     }
 
+    Log.Add("DownloadDrama: Downloading the selected drama...")
     Window.disableDownload()
     Window.disableOptions()
 
