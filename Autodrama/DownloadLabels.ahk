@@ -33,6 +33,26 @@ UpdateStatus:
 	}
     
 	_speed := aria2.getGlobalStat().result.downloadSpeed
+	
+	; Download is complete!
+    if ( (FAILED_DOWNLOADS + COMPLETED_DOWNLOADS) >= TOTAL_DOWNLOADS ) {
+        Remark.Update("Download complete!"
+                , "Successfully downloaded " COMPLETED_DOWNLOADS " file(s). There were " FAILED_DOWNLOADS " failed download(s).`n"
+                . "You may find the downloaded episodes in " . """" . oDramaInfo[1] . " (" oDramaInfo[2] ")" . """" . "."
+                , "Green")
+		Log.Add("UpdateStatus: Successfully downloaded " COMPLETED_DOWNLOADS " file(s). There were " FAILED_DOWNLOADS " failed download(s).")
+
+		Window.downloadControls("Disable", "Disable")
+		Window.enableInput()
+		SetTimer, UpdateStatus, Off
+
+		GuiControlGet, OnFinish, Main:, OnFinish
+		if (OnFinish = "THE KING")
+			TheKing()
+
+		return
+    
+	}
 	if !(_speed) {
 		; 100 means keep trying for ~100 seconds
 		if (failedRetries > 100)
@@ -49,23 +69,10 @@ UpdateStatus:
 			return
 		}
 		failedRetries++
-        Remark.Update("Preparing to download files..."
+        Remark.Update("Trying to download files..."
                 , "Please wait as the app prepares your downloads."
                 , "Blue")
-		return
     }
-	
-	
-    if ( (FAILED_DOWNLOADS + COMPLETED_DOWNLOADS) = TOTAL_DOWNLOADS ) {
-        Remark.Update("Download complete!"
-                , "Successfully downloaded " COMPLETED_DOWNLOADS " file(s). There were " FAILED_DOWNLOADS " failed download(s).`n"
-                . "Click this text to open the download folder."
-                , "Green")
-		Log.Add("UpdateStatus: Successfully downloaded " COMPLETED_DOWNLOADS " file(s). There were " FAILED_DOWNLOADS " failed download(s).")
-		GuiControl, Main:+g, RemarkText, LaunchDownloadFolder
-		SetTimer, UpdateStatus, Off
-    
-	}
     else {
         Remark.Update("Downloading files at " . Download.FormatByteSize(_speed) . "/s"
                 , "There are " COMPLETED_DOWNLOADS " completed download(s) and " FAILED_DOWNLOADS " failed download(s).`n"
@@ -73,7 +80,3 @@ UpdateStatus:
                 , "Blue")
     }
 Return
-
-LaunchDownloadFolder:
-	Run, % MOVIE_DOWNLOAD_PATH
-return

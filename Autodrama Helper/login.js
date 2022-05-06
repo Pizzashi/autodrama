@@ -68,8 +68,7 @@ function CredentialsReady(mode)
 }
 
 //=================================Start here=================================
-
-const LAUNCHED_BY_AUTODRAMA = (window.location.href == "https://kissasian.li/?LaunchedByAutodrama" || window.location.href == "https://kissasian.li/Login?LaunchedByAutodrama")
+const LAUNCHED_BY_AUTODRAMA = (window.location.href.match(/kissasian.li\/\?LaunchedByAutodrama/) || window.location.href.match(/kissasian.li\/Login\?LaunchedByAutodrama/))
 
 // Check if just logged in
 if (window.location.pathname == "/") {
@@ -87,7 +86,7 @@ if (LAUNCHED_BY_AUTODRAMA)
 		if (window.location.pathname == "/Login") {
 			FillOutCredentials();
 		} else {
-			window.location.href = loginLink[0].href + "?LaunchedByAutodrama";
+			window.location.href = loginLink[0].href + "?LaunchedByAutodrama&PersistPage";
 		}
 	}
 	else {

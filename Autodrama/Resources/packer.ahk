@@ -5,6 +5,7 @@ SetWorkingDir %A_ScriptDir%
 
 DllPackFiles(A_ScriptDir . "\res\images", "resources.dll", "Images")
 DllPackFiles(A_ScriptDir . "\res\fonts", "resources.dll", "Fonts")
+DllPackFiles(A_ScriptDir . "\res\audio", "resources.dll", "Audio")
 ;DllPackFiles(A_ScriptDir . "\res\", "resources.dll", "Resources")
 ;Msgbox % "Files:`n" . DllEnum("resources.dll", "Resources", "", "`n")
 

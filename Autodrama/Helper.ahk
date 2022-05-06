@@ -8,7 +8,7 @@ class Helper
                     , "Blue")
         Log.Add("Helper.readyCredentials(): Checking for credentials...")
 
-        static homePage := "https://kissasian.li/?LaunchedByAutodrama"
+        static homePage := "https://kissasian.li/?LaunchedByAutodrama?AnotherInstance"
         /* 
          * To prevent mishaps, the helper will check only these links to check for logins:
          * "https://kissasian.li/?LaunchedByAutodrama"
@@ -21,10 +21,15 @@ class Helper
     ; If you add a return statement here, CheckFiles won't be turned on again.
     processSignal(filePath)
     {
+        Global
+        
         SetTimer, CheckFiles, Off
         FileRead, helperSignal, % filePath
         FileDelete, % filePath
 
+        if !IsObject(oAriaDownloadLinks)
+            oAriaDownloadLinks := []
+            
         if (helperSignal = "eFeNotAvail") {
             Remark.Update("One of the download links is down..."
                         , "One of episodes has no valid FE download link. Please try again later or tomorrow. Igna si mama nga down ang server."
@@ -46,6 +51,10 @@ class Helper
         {
             fileName := (A_Index = 1) ? A_LoopField . ".mp4" : fileName
             downloadLink := (A_Index = 2) ? A_LoopField : downloadLink
+
+            if (!fileName || !downloadLink)
+                continue
+
             if (downloadLink = "no_download_link") {
                 Remark.Update("One of the download links is down..."
                         , "One of episodes has no valid download link. Please try again later or tomorrow. Igna si mama nga down ang server."
@@ -57,7 +66,7 @@ class Helper
         }
 
         oAriaDownloadLinks.Push( {fileName: fileName, downloadLink: downloadLink} )
-        Log.Add("Helper.processSignal(): Added aria2 download link for " fileName)      
+        Log.Add("Helper.processSignal(): Added aria2 download link for " fileName "`n`tDownload link is: " downloadLink)      
         SetTimer, CheckFiles, 1000
 
         Download.pushToAria(oAriaDownloadLinks)

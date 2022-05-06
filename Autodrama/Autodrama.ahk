@@ -3,9 +3,9 @@
 ;@Ahk2Exe-SetMainIcon Main.ico
 ;@Ahk2Exe-SetCopyright Copyright © 2022 Baconfry
 ;@Ahk2Exe-SetCompanyName Furaico
-;@Ahk2Exe-SetVersion 0.2
+;@Ahk2Exe-SetVersion 0.3.2
 ;===========================================================;
-global AUTODRAMA_VERSION := "0.2"
+global AUTODRAMA_VERSION := "0.3.2"
 
 #NoEnv
 SetBatchLines, -1
@@ -23,6 +23,8 @@ ListLines Off
 #Include aria2\Jxon.ahk
 #Include Lib\Dll.ahk
 #Include Lib\GDI.ahk
+#Include Cleanup.ahk
+#Include ComboBox.ahk
 #Include Download.ahk
 #Include Drama.ahk
 #Include ErrorHandling.ahk
@@ -30,6 +32,8 @@ ListLines Off
 #Include GetDownloadFolders.ahk
 #Include Helper.ahk
 #Include Log.ahk
+#Include OnMouseMove.ahk
+#Include PlaySound.ahk
 #Include Remark.ahk
 #Include Window.ahk
 
@@ -43,17 +47,18 @@ if !FileExist("aria2c.exe")
 
 
 Process, Exist ; Retrieve the script's PID
-global AUTODRAMA_PID := ErrorLevel ; The script's PID is in ErrorLevel
+global AUTODRAMA_PID := ErrorLevel                              ; The script's PID is in ErrorLevel
      , FIREFOX_DOWNLOAD_PATH := GetFirefoxDownloadFolder()
      , USER_DOWNLOAD_PATH    := GetUserDownloadFolder()
      , MOVIE_DOWNLOAD_PATH   := USER_DOWNLOAD_PATH . "\Video\"
-     , oAriaDownloadLinks := []
+     , COMBO_BOX_HISTORY     := ""                              ; Used in ComboBoxHistory.ahk
+     , REMARK_TEXT_ONCLICK   := ""                              ; Used as a flag for determining what action is done when the remark text is clicked
+     , ENABLE_SEARCH_DRAMA   := 1                               ; Used as a way to disable the search button
 
-
-; Delete old .autodramatext files
-FileDelete, %FIREFOX_DOWNLOAD_PATH%\*.autodramatext
-; Delete the app's old images folder
-FileRemoveDir, DownloadedImages, 1
+; Deletes all unnecessary files from last session
+Cleanup()
+; Read previous search history for DramaLink
+ComboBox.readPrevHistory()
 
 ;========== Start Load resources from dll for the gui ==========
 ;================= FONTS =================
@@ -74,12 +79,12 @@ szSearch := Dll.Read(Search, "resources.dll", "Images", "search.png")
 GDI.Commence("Shutdown")
 ;========== End Load resources from dll for the gui ============
 
-Gui, Main:New, HwndhMainGui, % "Autodrama v" . AUTODRAMA_VERSION
+Gui, Main:New, HwndhMainGui +OwnDialogs, % "Autodrama v" . AUTODRAMA_VERSION
 ;===================== Left side of the GUI =====================
 ;================= Drama Link ===================
 Gui, Main:Add, Text, x20 y10 w200 h30 HwndhDramaLinkText c287882, % "Drama Link"
 Gui, Main:Font, s10, Segoe UI
-Gui, Main:Add, ComboBox, x20 y+5 w315 vDramaLink, % "https://kissasian.li/Drama/Kamen-Rider-Saber-Transformation-Secret-of-Seven-Riders-Special-Issue|https://kissasian.li/Drama/Crazy-Love|two|three|four|five"
+Gui, Main:Add, ComboBox, x20 y+5 w315 vDramaLink HwndhDramaLink, % COMBO_BOX_HISTORY
 Gui, Main:Add, Picture, x+10 yp-5 w35 h35 HwndhSearchIcon vSearchIcon gSearchDrama 0x20E
 GDI.LoadFont(hDramaLinkText, TitleFont)
 GDI.LoadPicture(hSearchIcon, hBitmapSearch)
@@ -87,9 +92,9 @@ GDI.LoadPicture(hSearchIcon, hBitmapSearch)
 Gui, Main:Add, Text, x20 y+20 w200 h40 HwndhOptionsText c287882, % "Options"
 Gui, Main:Font, Norm
 Gui, Main:Add, Text, x20 y+10 w75, % "Mode"
-Gui, Main:Add, DDL, x+20 yp-3 w220 vDownloadType gChangeDownloadType, % "Download all episodes||Download chosen episodes|Download new episodes"
+Gui, Main:Add, DDL, x+20 yp-3 w220 vDownloadType gChangeDownloadType, % "Download all episodes||Download chosen episodes"
 Gui, Main:Add, Text, x20 y+15 w75, % "On finish"
-Gui, Main:Add, DDL, x+20 yp-3 w220 vOnFinish, % "YOU AINT NOTHING BUT A HOUND DOG|Notify Daisy|Do nothing||"
+Gui, Main:Add, DDL, x+20 yp-3 w220 vOnFinish, % "THE KING|Notify Daisy|Do nothing||"
 ;=== Child GUI to hide it in one go ======
 Gui, Main2:New, ParentMain -Caption
 Gui, Main2:Font, s10, Segoe UI
@@ -103,12 +108,13 @@ Gui, Main2:Show, x0 y260 hide
 GDI.LoadFont(hOptionsText, TitleFont)
 ;=================  Download ===================
 Gui, Main:Add, Button, x20 y260 w360 h40 disabled gDownloadDrama vDownloadBtn HwndhDownloadBtn, % "Download"
-Gui, Main:Add, Button, x20 y+10 w175 h40 disabled gDownloadDrama vResumeDownloadBtn HwndhResumeDownloadBtn, % "Resume Downloads"
-Gui, Main:Add, Button, x+10 yp+0 w175 h40 disabled gDownloadDrama vPauseDownloadBtn HwndhPauseDownloadBtn, % "Pause Downloads"
+Gui, Main:Add, Button, x20 y+10 w175 h40 disabled gResumeDownloads vResumeDownloadBtn HwndhResumeDownloadBtn, % "Resume Downloads"
+Gui, Main:Add, Button, x+10 yp+0 w175 h40 disabled gPauseDownloads vPauseDownloadBtn HwndhPauseDownloadBtn, % "Pause Downloads"
+Gui, Main:Add, Button, x420 yp+0 w360 h40 gOpenDownloadFolder HwndhOpenDwnldDirBtn, % "Open Download Folder"
 GDI.LoadFont(hDownloadBtn, TitleFont)
 GDI.LoadFont(hResumeDownloadBtn, HeaderFont)
 GDI.LoadFont(hPauseDownloadBtn, HeaderFont)
-
+GDI.LoadFont(hOpenDwnldDirBtn, HeaderFont)
 ;===================== Right side of the GUI =====================
 Gui, Main:Add, Text, x420 y10 w200 h30 HwndhInformationText c287882, % "Information"
 ;Gui, Main:Add, Text, x420 y250 h25 w360 HwndhDlListText c287882, % "Ongoing downloads"
@@ -147,6 +153,8 @@ Gui, Main:Add, Edit, x20 y+5 w360 h80 -wrap number readonly vGuiLog HwndhGuiLog,
 Gui, Main:Add, Button, x75 y+5 w250, % "Upload log to Baconfry-sama"
 */
 
+
+OnMessage(0x200, "OnMouseMove") ; For changing the cursor to "HAND" when it is over the search icon
 Gui, Main:Show, h500 w800
 OnExit("ExitFunction")
 return
@@ -154,7 +162,52 @@ return
 #Include HelperLabels.ahk
 #Include DownloadLabels.ahk
 
+OpenDownloadFolder:
+    Run, % MOVIE_DOWNLOAD_PATH
+return
+
+PauseDownloads:
+    SetTimer, UpdateStatus, Off
+    if (aria2.pauseAll().result = "OK") {
+        Window.downloadControls("Disable", "Enable")
+        Log.Add("PauseDownloads: Successfully paused Aria2c downloads.")
+        Remark.Update("Successfully paused downloads."
+                    , "Your downloads were paused with no problems."
+                    , "Green")
+    }
+    else {
+        Log.Add("ERROR: PauseDownloads: Error in pausing Aria2c downloads.")
+        Remark.Update("An error occured while pausing your downloads!"
+                    , "Your downloads could not be paused successfully. Please close the app and try again."
+                    , "Red"
+                    , 1)
+    }    
+return
+
+ResumeDownloads:
+    SetTimer, UpdateStatus, 1000
+    if (aria2.unpauseAll().result = "OK") {
+        Window.downloadControls("Enable", "Disable")
+        Log.Add("ResumeDownloads: Successfully resumed Aria2c downloads.")
+        Remark.Update("Successfully resumed downloads."
+                    , "Your downloads were paused with no problems."
+                    , "Green")
+    }
+    else {
+        Log.Add("ERROR: ResumeDownloads: Error in resuming Aria2c downloads.")
+        Remark.Update("There's an error in resuming your downloads!"
+                    , "Your downloads could not be resumed successfully. Please close the app and try again."
+                    , "Red"
+                    , 1)
+    }
+    Gosub, UpdateStatus ; Start updating GUI immediately
+return
+
 SearchDrama:
+    if !(ENABLE_SEARCH_DRAMA)
+        return
+
+    Window.resetAll()
     Gui, Main:Submit, NoHide
     
     ; Check for invalid input
@@ -221,6 +274,7 @@ SearchDrama:
                 , "Look at the drama details. If this is the drama that you intend to download, then modify the Options and hit download!"
                 , "Green")
     Log.Add("Successfully processed drama information and download links.")
+    ComboBox.updateHistory(DramaLink) ; Record the last link to history
     Window.enableInput()
     Window.enableDownload()
 return
@@ -248,6 +302,7 @@ DownloadDrama:
     }
 
     Log.Add("DownloadDrama: Downloading the selected drama...")
+    Window.disableInput()
     Window.disableDownload()
     Window.disableOptions()
 

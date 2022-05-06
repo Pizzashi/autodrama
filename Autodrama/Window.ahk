@@ -3,23 +3,19 @@ class Window
     resetAll()
     {
         Global
-
-        GuiControl, Main:-g, RemarkText
+        this.enableInput()
         this.enableOptions()
         this.disableDownload()
-        this.enableInput()
-        
+        this.downloadControls("Disable", "Disable")
+
         gidList :=
         oAriaDownloadLinks :=
     }
-    
+
     downloadControls(pauseState, resumeState)
     {
         Global
         
-        pauseState := 1 ? "Enable" : 0 ? "Disable" : pauseState
-        , resumeState := 1 ? "Enable" : 0 ? "Disable" : resumeState
-
         if (pauseState ~= "Enable|Disable")
             GuiControl, Main:%pauseState%, PauseDownloadBtn
         if (resumeState ~= "Enable|Disable")
@@ -59,9 +55,7 @@ class Window
     disableInput()
     {
         Global
-        ; SearchIcon GoSub is gSearchDrama
-        ; Use GuiControl, Main:+gSearchDrama, SearchIcon
-        GuiControl, Main:-g, SearchIcon
+        ENABLE_SEARCH_DRAMA := 0 ; Disable search button
         GuiControl, Main:Disable, DramaLink
         this.disableOptions()
     }
@@ -69,13 +63,8 @@ class Window
     enableInput()
     {
         Global
-        GuiControl, Main:+g, SearchIcon, SearchDrama
+        ENABLE_SEARCH_DRAMA := 1 ; Enable search button
         GuiControl, Main:Enable, DramaLink
         this.enableOptions()
-    }
-
-    updateComboBox()
-    {
-        Global
     }
 }

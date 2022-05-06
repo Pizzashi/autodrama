@@ -13,7 +13,7 @@ class Download
         ; The flag was triggered at Helper.readyCredentials()
 
         Remark.Update("Gathering the download links..."
-                    , "Please wait as the app gathers the download links for the episodes."
+                    , "Please wait as the app gathers the download links for the episodes. This may take a while, so feel free to make some milk or take a poop."
                     , "Blue")
         Log.Add("Download.Commence(): Gathering the download links for " DramaLink
               . "`nDownload type is: " DownloadType
@@ -24,10 +24,18 @@ class Download
 
         SetTimer, CheckFiles, 1000
 
+        local epNo := 0
         Loop % oDownloadLinks.Length()
         {
+            ; Timeout for 30 seconds every 5 episodes to avoid error messages
+            if (epNo >= 5) {
+                Sleep, 30000
+                epNo := 0
+            }
+
             Run, % oDownloadLinks[A_Index]
-            Sleep, 1000
+            epNo++
+            Sleep, 2000
         }
     }
 
@@ -40,9 +48,9 @@ class Download
             , "Blue")
 
         local SCRT_TOKEN := "xRyEkIylIPAxgw9Yo6NNnpvajNvAHRZPqvS1lwgrOXX9K6pNlSdBQt4w4y73pYfL"
-            , global_options := "max-concurrent-downloads=2`r`n"
-                            . "max-overall-download-limit=500K"
-        ;, global_options := "max-concurrent-downloads=2"
+        ;    , global_options := "max-concurrent-downloads=2`r`n"
+        ;                    . "max-overall-download-limit=500K"
+        , global_options := "max-concurrent-downloads=2"
         , oGlobalOptions := this.Options2obj(global_options)
 
         Run, %ComSpec% /c aria2c.exe --enable-rpc --rpc-listen-all --rpc-secret=%SCRT_TOKEN% --stop-with-process=%AUTODRAMA_PID% -c,, Hide UseErrorLevel, pidAria
@@ -106,6 +114,7 @@ class Download
             gidList.Push( {gid: gid, fileName: value.fileName} )
         }
         
+        Window.downloadControls("Enable", "Disable")
         SetTimer, UpdateStatus, 1000
     }
 

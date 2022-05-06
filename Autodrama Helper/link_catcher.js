@@ -49,18 +49,11 @@ function SaveResults(ddl)
     });
 }
 
-function ClickDownload()
-{
+jQuery(document).ready(function() {
     $("#download").trigger('click');
-}
+    BeforeCompleteGetResults(); // Detect errors that appear immediately on page load
 
-// Detect errors that appear immediately on page load
-BeforeCompleteGetResults()
-
-// Waits for $(document).ready()
-// Wait 3 seconds before clicking
-setTimeout(ClickDownload, 3000)
-
-// Wait for at least 15 seconds to check for errors
-// Error message/download link should appear by 10 seconds after clicking
-setTimeout(GetResults, 15000)
+    // Wait for 12 seconds to check for errors
+    // Error message/download link should appear by 10 seconds after clicking
+    setTimeout(GetResults, 12000)
+});

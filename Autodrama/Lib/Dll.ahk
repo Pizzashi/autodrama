@@ -1,3 +1,14 @@
+/* _________________________________________________________________________________________________
+                       
+   Simple wrapper of 4 functions to create and use DLL resources in AutoHotkey Scripting Language
+   By SKAN - Suresh Kumar A N  (arian.suresh@gmail.com)
+   Created: 05-Sep-2010 / Last-Modified: 10-Sep-2017 / Version: 0.9 / Autohotkey 1.1
+
+   Forum topic : https://autohotkey.com/boards/viewtopic.php?t=36201
+   Old topic   : http://www.autohotkey.com/forum/viewtopic.php?t=62180
+____________________________________________________________________________________________________
+*/ 
+
 class Dll
 {
 	Read(ByRef Var, Filename, Section, Key) {    ; By SKAN | goo.gl/DjDxzW

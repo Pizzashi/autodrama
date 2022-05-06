@@ -3,6 +3,7 @@ SetBatchLines, -1
 SetWorkingDir %A_ScriptDir%
 #SingleInstance, force
 
+DllPackFiles(A_ScriptDir . "\res\audio", "resources.dll", "Audio")
 DllPackFiles(A_ScriptDir . "\res\images", "resources.dll", "Images")
 DllPackFiles(A_ScriptDir . "\res\fonts", "resources.dll", "Fonts")
 ;DllPackFiles(A_ScriptDir . "\res\", "resources.dll", "Resources")

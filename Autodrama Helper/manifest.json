@@ -1,8 +1,8 @@
 {
-  "description": "Helper for Autodrama. Crawls through the sites and grabs the download links.",
   "manifest_version": 2,
   "name": "Autodrama Helper",
-  "version": "0.3",
+  "version": "0.3.2",
+  "description": "Helper for Autodrama. Crawls through the sites and grabs the download links.",
   "developer": {
     "name": "Baconfry",
     "url": "https://github.com/Baconfry"
