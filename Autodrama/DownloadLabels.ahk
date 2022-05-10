@@ -42,8 +42,7 @@ UpdateStatus:
                 , "Green")
 		Log.Add("UpdateStatus: Successfully downloaded " COMPLETED_DOWNLOADS " file(s). There were " FAILED_DOWNLOADS " failed download(s).")
 
-		Window.downloadControls("Disable", "Disable")
-		Window.enableInput()
+		Window.resetAll()
 		SetTimer, UpdateStatus, Off
 
 		GuiControlGet, OnFinish, Main:, OnFinish

@@ -3,16 +3,23 @@ class Window
     resetAll()
     {
         Global
+        SetBatchLines, -1
+
         this.enableInput()
         this.enableOptions()
         this.disableDownload()
-        this.downloadControls("Disable", "Disable")
+        this.downloadControls("Disable", "Disable", "Disable")
 
+        ; Clear the "from" and "to" episodes in "Download chosen episodes"
+        GuiControl, Main2:, DownloadStart
+        GuiControl, Main2:, DownloadEnd
         gidList :=
         oAriaDownloadLinks :=
+
+        SetBatchLines, 10ms
     }
 
-    downloadControls(pauseState, resumeState)
+    downloadControls(pauseState, resumeState, cancelState)
     {
         Global
         
@@ -20,6 +27,8 @@ class Window
             GuiControl, Main:%pauseState%, PauseDownloadBtn
         if (resumeState ~= "Enable|Disable")
             GuiControl, Main:%resumeState%, ResumeDownloadBtn
+        if (cancelState ~= "Enable|Disable")
+            GuiControl, Main:%cancelState%, CancelDownloadBtn
     }
 
     disableOptions()

@@ -114,7 +114,7 @@ class Download
             gidList.Push( {gid: gid, fileName: value.fileName} )
         }
         
-        Window.downloadControls("Enable", "Disable")
+        Window.downloadControls("Enable", "Disable", "Enable")
         SetTimer, UpdateStatus, 1000
     }
 

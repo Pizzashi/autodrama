@@ -11,16 +11,13 @@ TheKing(playMusic := 1)
     if (sucessfulPlay) {
         Log.Add("TheKing(): Successfully played the song.")
 
-        MsgBox, 8192, % "Your download is complete!", % "To stop playing THE KING, simply click OK or close this message box.", 136
+        MsgBox, 8192, % " Your download is complete!", % "To stop playing THE KING, simply click OK or close this message box.", 136
         PlaySound(0) ; Stop the song
 
         Log.Add("TheKing(): Successfully stopped the song.")
         return
     }
 }
-
-
-
 
 /*  Use PlaySound(0) or any nonexistent variable to stop the playing sound (this will return 0)
  *

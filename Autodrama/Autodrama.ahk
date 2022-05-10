@@ -60,7 +60,9 @@ Cleanup()
 ; Read previous search history for DramaLink
 ComboBox.readPrevHistory()
 
-;========== Start Load resources from dll for the gui ==========
+/*
+ *      LOAD RESOURCES FROM THE DLL FOR THE GUI
+ */
 ;================= FONTS =================
 nSize := Dll.Read(Buffer, "resources.dll", "Fonts", "ProductSans.ttf")
 DllCall("AddFontMemResourceEx", UInt,&Buffer, UInt,nSize, Int,0, UIntP,n)
@@ -89,7 +91,7 @@ Gui, Main:Add, Picture, x+10 yp-5 w35 h35 HwndhSearchIcon vSearchIcon gSearchDra
 GDI.LoadFont(hDramaLinkText, TitleFont)
 GDI.LoadPicture(hSearchIcon, hBitmapSearch)
 ;================== Options =====================
-Gui, Main:Add, Text, x20 y+20 w200 h40 HwndhOptionsText c287882, % "Options"
+Gui, Main:Add, Text, x20 y+20 w200 h40 HwndhOptionsText c287882, % "Download Options"
 Gui, Main:Font, Norm
 Gui, Main:Add, Text, x20 y+10 w75, % "Mode"
 Gui, Main:Add, DDL, x+20 yp-3 w220 vDownloadType gChangeDownloadType, % "Download all episodes||Download chosen episodes"
@@ -108,15 +110,17 @@ Gui, Main2:Show, x0 y260 hide
 GDI.LoadFont(hOptionsText, TitleFont)
 ;=================  Download ===================
 Gui, Main:Add, Button, x20 y260 w360 h40 disabled gDownloadDrama vDownloadBtn HwndhDownloadBtn, % "Download"
-Gui, Main:Add, Button, x20 y+10 w175 h40 disabled gResumeDownloads vResumeDownloadBtn HwndhResumeDownloadBtn, % "Resume Downloads"
-Gui, Main:Add, Button, x+10 yp+0 w175 h40 disabled gPauseDownloads vPauseDownloadBtn HwndhPauseDownloadBtn, % "Pause Downloads"
-Gui, Main:Add, Button, x420 yp+0 w360 h40 gOpenDownloadFolder HwndhOpenDwnldDirBtn, % "Open Download Folder"
+Gui, Main:Add, Button, x20 y+10 w113 h40 disabled gResumeDownloads vResumeDownloadBtn HwndhResumeDownloadBtn, % "Resume"
+Gui, Main:Add, Button, x+10 yp+0 w114 h40 disabled gPauseDownloads vPauseDownloadBtn HwndhPauseDownloadBtn, % "Pause"
+Gui, Main:Add, Button, x+10 yp+0 w113 h40 disabled gCancelDownloads vCancelDownloadBtn HwndhCancelDownloadBtn, % "Cancel"
+Gui, Main:Add, Button, x420 yp+0 w360 h40 gOpenDownloadFolder HwndhOpenDwnldDirBtn, % "Open Downloads Folder"
 GDI.LoadFont(hDownloadBtn, TitleFont)
 GDI.LoadFont(hResumeDownloadBtn, HeaderFont)
 GDI.LoadFont(hPauseDownloadBtn, HeaderFont)
+GDI.LoadFont(hCancelDownloadBtn, HeaderFont)
 GDI.LoadFont(hOpenDwnldDirBtn, HeaderFont)
 ;===================== Right side of the GUI =====================
-Gui, Main:Add, Text, x420 y10 w200 h30 HwndhInformationText c287882, % "Information"
+Gui, Main:Add, Text, x420 y10 w200 h30 HwndhInformationText c287882, % "Drama Information"
 ;Gui, Main:Add, Text, x420 y250 h25 w360 HwndhDlListText c287882, % "Ongoing downloads"
 GDI.LoadFont(hInformationText, TitleFont)
 
@@ -166,28 +170,10 @@ OpenDownloadFolder:
     Run, % MOVIE_DOWNLOAD_PATH
 return
 
-PauseDownloads:
-    SetTimer, UpdateStatus, Off
-    if (aria2.pauseAll().result = "OK") {
-        Window.downloadControls("Disable", "Enable")
-        Log.Add("PauseDownloads: Successfully paused Aria2c downloads.")
-        Remark.Update("Successfully paused downloads."
-                    , "Your downloads were paused with no problems."
-                    , "Green")
-    }
-    else {
-        Log.Add("ERROR: PauseDownloads: Error in pausing Aria2c downloads.")
-        Remark.Update("An error occured while pausing your downloads!"
-                    , "Your downloads could not be paused successfully. Please close the app and try again."
-                    , "Red"
-                    , 1)
-    }    
-return
-
 ResumeDownloads:
     SetTimer, UpdateStatus, 1000
     if (aria2.unpauseAll().result = "OK") {
-        Window.downloadControls("Enable", "Disable")
+        Window.downloadControls("Enable", "Disable", "Enable")
         Log.Add("ResumeDownloads: Successfully resumed Aria2c downloads.")
         Remark.Update("Successfully resumed downloads."
                     , "Your downloads were paused with no problems."
@@ -203,11 +189,47 @@ ResumeDownloads:
     Gosub, UpdateStatus ; Start updating GUI immediately
 return
 
+PauseDownloads:
+    SetTimer, UpdateStatus, Off
+    if (aria2.pauseAll().result = "OK") {
+        Window.downloadControls("Disable", "Enable", "Enable")
+        Log.Add("PauseDownloads: Successfully paused Aria2c downloads.")
+        Remark.Update("Successfully paused downloads."
+                    , "Your downloads were paused with no problems."
+                    , "Green")
+    }
+    else {
+        Log.Add("ERROR: PauseDownloads: Error in pausing Aria2c downloads.")
+        Remark.Update("An error occured while pausing your downloads!"
+                    , "Your downloads could not be paused successfully. Please close the app and try again."
+                    , "Red"
+                    , 1)
+    }    
+return
+
+CancelDownloads:
+    SetTimer, UpdateStatus, Off
+
+    Log.Add("CancelDownloads: Attempting to shutdown aria2c.")
+    if (aria2.shutdown().result = "OK") {
+		Window.resetAll()
+        Remark.Update("Successfully cancelled downloads."
+                    , "Your downloads have been successfully cancelled. You may try searching another drama again."
+                    , "Green")
+    }
+    else {
+        Log.Add("ERROR: CancelDownloads: Error in shutting down aria.")
+        Remark.Update("There was an error in cancelling your downloads."
+                    , "Your downloads could not be cancelled. Close and restart the app instead."
+                    , "Red"
+                    , 1)
+    }
+return
+
 SearchDrama:
     if !(ENABLE_SEARCH_DRAMA)
         return
 
-    Window.resetAll()
     Gui, Main:Submit, NoHide
     
     ; Check for invalid input
