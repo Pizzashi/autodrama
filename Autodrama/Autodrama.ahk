@@ -30,6 +30,7 @@ ListLines Off
 #Include Drama.ahk
 #Include ErrorHandling.ahk
 #Include ExitFunction.ahk
+#Include FileCheck.ahk
 #Include GetDownloadFolders.ahk
 #Include Helper.ahk
 #Include Log.ahk
@@ -37,15 +38,6 @@ ListLines Off
 #Include PlaySound.ahk
 #Include Remark.ahk
 #Include Window.ahk
-
-Log.Init()
-
-if !FileExist("resources.dll")
-    FatalError("resources.dll not found! Try redownloading the app.")
-if !FileExist("aria2c.exe")
-    FatalError("aria2c.exe not found! Try redownloading the app.")
-; Check for necessary files (aria2c, YA AINT NUFFIN LIKE A HOUND DOG)
-
 
 Process, Exist ; Retrieve the script's PID
 global AUTODRAMA_PID := ErrorLevel                              ; The script's PID is in ErrorLevel
@@ -56,10 +48,10 @@ global AUTODRAMA_PID := ErrorLevel                              ; The script's P
      , REMARK_TEXT_ONCLICK   := ""                              ; Used as a flag for determining what action is done when the remark text is clicked
      , ENABLE_SEARCH_DRAMA   := 1                               ; Used as a way to disable the search button
 
-; Deletes all unnecessary files from last session
-Cleanup()
-; Read previous search history for DramaLink
-ComboBox.readPrevHistory()
+Log.Init()                                                      ; Initialize logging
+Cleanup()                                                       ; Deletes all unnecessary files from last session
+FileCheck("resources.dll, aria2c.exe")                          ; Check the existence of the required files
+ComboBox.readPrevHistory()                                      ; Read previous search history for DramaLink
 
 /*
  *      LOAD RESOURCES FROM THE DLL FOR THE GUI
