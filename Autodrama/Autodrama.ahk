@@ -23,6 +23,7 @@ ListLines Off
 #Include aria2\Jxon.ahk
 #Include Lib\Dll.ahk
 #Include Lib\GDI.ahk
+#Include AdvancedSettings.ahk
 #Include Cleanup.ahk
 #Include ComboBox.ahk
 #Include Download.ahk
@@ -66,7 +67,8 @@ ComboBox.readPrevHistory()
 ;================= FONTS =================
 nSize := Dll.Read(Buffer, "resources.dll", "Fonts", "ProductSans.ttf")
 DllCall("AddFontMemResourceEx", UInt,&Buffer, UInt,nSize, Int,0, UIntP,n)
-HeaderFont := GDI.ModifyFont(0, "FontFace=Product Sans, Height=13") ; needs h20, h25 for best effects
+ScreamFont := GDI.ModifyFont(0, "FontFace=Product Sans, Height=25")
+, HeaderFont := GDI.ModifyFont(0, "FontFace=Product Sans, Height=13") ; needs h20, h25 for best effects
 , TitleFont := GDI.ModifyFont(0, "FontFace=Product Sans, Height=16") ; h30 is good
 , h3Font := GDI.ModifyFont(0, "FontFace=Product Sans, Height=12") ; h20 for best effects
 ;=============== PICTURES ================
@@ -75,7 +77,6 @@ szSearch := Dll.Read(Search, "resources.dll", "Images", "search.png")
 , hBitmapSearch := GDI.hBitmapFromBuffer(Search, szSearch)
 , szMiku := Dll.Read(Miku, "resources.dll", "Images", "miku.png")
 , hBitmapMiku := GDI.hBitmapFromBuffer(Miku, szMiku)
-
 , szDramaPlacehldr := Dll.Read(DramaPlaceHldr, "resources.dll", "Images", "drama_placeholder.png")
 , hBitmapDramaPlacehldr := GDI.hBitmapFromBuffer(DramaPlaceHldr, szDramaPlacehldr)
 GDI.Commence("Shutdown")
@@ -90,40 +91,44 @@ Gui, Main:Add, ComboBox, x20 y+5 w315 vDramaLink HwndhDramaLink, % COMBO_BOX_HIS
 Gui, Main:Add, Picture, x+10 yp-5 w35 h35 HwndhSearchIcon vSearchIcon gSearchDrama 0x20E
 GDI.LoadFont(hDramaLinkText, TitleFont)
 GDI.LoadPicture(hSearchIcon, hBitmapSearch)
-;================== Options =====================
-Gui, Main:Add, Text, x20 y+20 w200 h40 HwndhOptionsText c287882, % "Download Options"
-Gui, Main:Font, Norm
-Gui, Main:Add, Text, x20 y+10 w75, % "Mode"
-Gui, Main:Add, DDL, x+20 yp-3 w220 vDownloadType gChangeDownloadType, % "Download all episodes||Download chosen episodes"
-Gui, Main:Add, Text, x20 y+15 w75, % "On finish"
-Gui, Main:Add, DDL, x+20 yp-3 w220 vOnFinish, % "THE KING|Notify Daisy|Do nothing||"
-;=== Child GUI to hide it in one go ======
-Gui, Main2:New, ParentMain -Caption
-Gui, Main2:Font, s10, Segoe UI
-Gui, Main2:Add, Text, x20 y+10, % "Download episodes:"
-Gui, Main2:Add, Text, x+10 yp+0, % "from"
-Gui, Main2:Add, Edit, x+10 yp-3 w40 vDownloadStart number,
-Gui, Main2:Add, Text, x+10 yp+3, % "to"
-Gui, Main2:Add, Edit, x+10 yp-3 w40 vDownloadEnd number,
-Gui, Main2:Show, x0 y260 hide
-;=== END Child GUI  ======================
+;================= Start Guide ===================
+Gui, Main:Add, Text, c287882 center w300 h160 x45 y180 vStartGuide HwndhStartGuide, % "To begin, search a drama."
+GDI.LoadFont(hStartGuide, ScreamFont)
+;=============== Download Options ===============
+Gui, MainO:New, ParentMain -Caption
+Gui, MainO:Font, s10, Segoe UI
+Gui, MainO:Add, Text, x20 y+0 w200 h40 HwndhOptionsText c287882, % "Download Options"
+Gui, MainO:Font, Norm
+Gui, MainO:Add, Text, x20 y+10 w75, % "Mode"
+Gui, MainO:Add, DDL, x+20 yp-3 w220 vDownloadType gChangeDownloadType, % "Download all episodes||Download chosen episodes"
+Gui, MainO:Add, Text, x20 y+15 w75, % "On finish"
+Gui, MainO:Add, DDL, x+20 yp-3 w220 vOnFinish, % "THE KING|Notify Daisy|Do nothing||"
 GDI.LoadFont(hOptionsText, TitleFont)
+;=== Child GUI to hide it in one go ======
+Gui, MainO2:New, ParentMainO -Caption
+Gui, MainO2:Font, s10, Segoe UI
+Gui, MainO2:Add, Text, x20 y+10, % "Download episodes:"
+Gui, MainO2:Add, Text, x+10 yp+0, % "from"
+Gui, MainO2:Add, Edit, x+10 yp-3 w40 vDownloadStart number,
+Gui, MainO2:Add, Text, x+10 yp+3, % "to"
+Gui, MainO2:Add, Edit, x+10 yp-3 w40 vDownloadEnd number,
+Gui, MainO2:Show, x0 y150 hide
+;=== END Child GUI  ======================
 ;=================  Download ===================
-Gui, Main:Add, Button, x20 y260 w360 h40 disabled gDownloadDrama vDownloadBtn HwndhDownloadBtn, % "Download"
-Gui, Main:Add, Button, x20 y+10 w113 h40 disabled gResumeDownloads vResumeDownloadBtn HwndhResumeDownloadBtn, % "Resume"
-Gui, Main:Add, Button, x+10 yp+0 w114 h40 disabled gPauseDownloads vPauseDownloadBtn HwndhPauseDownloadBtn, % "Pause"
-Gui, Main:Add, Button, x+10 yp+0 w113 h40 disabled gCancelDownloads vCancelDownloadBtn HwndhCancelDownloadBtn, % "Cancel"
-Gui, Main:Add, Button, x420 yp+0 w360 h40 gOpenDownloadFolder HwndhOpenDwnldDirBtn, % "Open Downloads Folder"
+Gui, MainO:Add, Button, x20 y182 w360 h40 disabled gDownloadDrama vDownloadBtn HwndhDownloadBtn, % "Download"
+Gui, MainO:Add, Button, x20 y+10 w113 h40 disabled gResumeDownloads vResumeDownloadBtn HwndhResumeDownloadBtn, % "Resume"
+Gui, MainO:Add, Button, x+10 yp+0 w114 h40 disabled gPauseDownloads vPauseDownloadBtn HwndhPauseDownloadBtn, % "Pause"
+Gui, MainO:Add, Button, x+10 yp+0 w113 h40 disabled gCancelDownloads vCancelDownloadBtn HwndhCancelDownloadBtn, % "Cancel"
+Gui, MainO:Show, x0 y110 hide
 GDI.LoadFont(hDownloadBtn, TitleFont)
 GDI.LoadFont(hResumeDownloadBtn, HeaderFont)
 GDI.LoadFont(hPauseDownloadBtn, HeaderFont)
 GDI.LoadFont(hCancelDownloadBtn, HeaderFont)
-GDI.LoadFont(hOpenDwnldDirBtn, HeaderFont)
 ;===================== Right side of the GUI =====================
 Gui, Main:Add, Text, x420 y10 w200 h30 HwndhInformationText c287882, % "Drama Information"
-;Gui, Main:Add, Text, x420 y250 h25 w360 HwndhDlListText c287882, % "Ongoing downloads"
+Gui, Main:Add, Button, x420 y320 w360 h40 gOpenDownloadFolder HwndhOpenDwnldDirBtn, % "Open Downloads Folder"
 GDI.LoadFont(hInformationText, TitleFont)
-
+GDI.LoadFont(hOpenDwnldDirBtn, HeaderFont)
 ;================ Placeholder Right side of the GUI ===============
 Gui, MainR:New, ParentMain -Caption
 Gui, MainR:Add, Picture, x20 y0 w150 h195 border vDramaImage HwndhDramaImage 0x20E
@@ -137,16 +142,13 @@ Gui, MainR:Add, Text, xp+0 y+5, % "Raw episodes"
 Gui, MainR:Show, x500 y55 w400 h250
 GDI.LoadPicture(hDramaImage, hBitmapDramaPlacehldr)
 ;===================== Bottom of the GUI =====================
-Gui, Main:Add, Picture, w130 h117 x20 y395 HwndhMikuIcon 0x20E
+Gui, Main:Add, Picture, w130 h117 x20 y395 HwndhMikuIcon 0x20E gLaunchAdvancedSettings
 Gui, Main:Add, Progress, x+0 y380 w610 h100 BackgroundWhite
 Gui, MainR:Font, s12, Segoe UI
 Gui, Main:Add, Text, xp+10 yp+10 w590 h20 BackgroundTrans vRemarkTitle HwndhRemarkTitle cGreen, % "Everything looks good for now!"
 Gui, Main:Add, Text, xp+0 y+5 w590 h55 BackgroundTrans vRemarkText, % "To begin, copy and paste a drama link and click that shiny search button."
 GDI.LoadFont(hRemarkTitle, h3Font)
 GDI.LoadPicture(hMikuIcon, hBitmapMiku)
-
-
-
 /*
 ==================== Log ======================
 Gui, Main:Font, s10
@@ -168,6 +170,25 @@ return
 
 OpenDownloadFolder:
     Run, % MOVIE_DOWNLOAD_PATH
+return
+
+LaunchAdvancedSettings:
+    if (advSettingsClicks < 3) {
+        advSettingsClicks++
+        return
+    } else if (advSettingsClicks < 4) {
+        advSettingsClicks++
+        Remark.Update("Press me one more time to launch the advanced settings!"
+                    , "Make sure Baconfry-senpai has instructed you to do so before doing this."
+                    , "Teal")
+        return
+    }
+
+    Remark.Update("Successfully launched the advanced settings."
+                    , "Please do proceed with caution."
+                    , "Green")
+
+    AdvancedSettings.Launch()
 return
 
 ResumeDownloads:
@@ -299,11 +320,12 @@ SearchDrama:
     ComboBox.updateHistory(DramaLink) ; Record the last link to history
     Window.enableInput()
     Window.enableDownload()
+    Window.showDownloadOptions()
 return
 
 DownloadDrama:
     Gui, Main:Submit, NoHide
-    Gui, Main2:Submit, NoHide
+    Gui, MainO2:Submit, NoHide
     
     ; Check for invalid input
     if (DownloadType = "Download chosen episodes") {
@@ -349,15 +371,13 @@ DownloadDrama:
 return
 
 ChangeDownloadType:
-    Gui, Main:Submit, NoHide
+    Gui, MainO:Submit, NoHide
     if (DownloadType = "Download chosen episodes") {
-        Gui, Main2:Show
+        Gui, MainO2:Show
     } else {
-        Gui, Main2:Hide
+        Gui, MainO2:Hide
     }
 return
 
 MainGuiClose:
 ExitApp
-
-;aria2c -o "Character Movie" "https://fvs.io/redirector?token=aUMwZitReWp3QU5wS2R3WUREVmxzS1ZySWNHd3EzMzhrM21Vblllekt1SFpSLzBrTzc3NDhCS2NRcXo0R2xMMXFvTnNXU1kyQWRxSnpiVGN0UE9sdlJ0QXl6aEpDQW5HdjZqa3dsWHpiQnJBUHYyUXhyRHJndFhPQlUzWVY5VmRZSFd3VjFUWHVscmxJZ3pUZXkxbUlIaXRKaHJzTGFTOUYzdGo6VzRuK0RoMHdsbm14OThBWWFGcEh0Zz09x6ng"

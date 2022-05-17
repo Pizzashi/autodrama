@@ -1,3 +1,5 @@
+#Include ToGrayScale.ahk
+
 class Drama
 {
     ; Return value is an array that is: [dramaTitle, dramaAirDate, dramaStatus, totalEpisodes, oRawEpisodes[], urlDramaImage, oDownloadLinks]
@@ -13,10 +15,12 @@ class Drama
         , rgxDramaStatus  := "O)Status:<\/span>&nbsp;(.+)\s+<\/p>"
         , rgxEpisodeSub   := "class=""episodeSub"""
         , rgxEpisodeRaw   := "sUO)class=""episodeRaw"".+(Episode\s\b\d+\b).+<\/li>"
-        oRawEpisodes    := []
-        , oDramaInfo      := []
-        ,oDownloadLinks  := []
         ;==================================================
+        ; Local variables
+        oRawEpisodes      := []
+        , oDramaInfo      := []
+        , oDownloadLinks  := []
+        
 
         ; Check the UrlDownloadToFile in documentation for this code
         ; Basically downloads a URL to a variable
@@ -113,7 +117,7 @@ class Drama
         }
 
         Gui, MainK:New, ParentMain -Caption
-        Gui, MainK:Add, Picture, x20 y0 w150 h195 border, % "DownloadedImages\kdrama_banner.jpg"
+        Gui, MainK:Add, Picture, x20 y0 w150 h195 border vDramaInfoImage, % "DownloadedImages\kdrama_banner.jpg"
         Gui, MainK:Font, s14, Segoe UI
         Gui, MainK:Add, Text, x180 yp+0 w200, % dramaTitle
         Gui, MainK:Font, s11, Segoe UI
@@ -130,6 +134,20 @@ class Drama
 
         return (downloadError) ? 1 : 0
     }
+
+    infoImageToGrayScale()
+    {
+        Global
+
+        SetBatchLines, -1   ; Recommended because ToGrayscale() has a heavy 255-iteration loop
+        local hBitMapDramaInfo := LoadPicture("DownloadedImages\kdrama_banner.jpg")
+        , hBitMapGrayScl := ToGrayscale(hBitMapDramaInfo)
+        SetBatchLines, 10ms
+
+        GuiControl, MainK:, DramaInfoImage, % "HBITMAP:" . hBitMapGrayScl
+        return
+    }
+
 
     allLinksUp(oDownloadLinks)
     {

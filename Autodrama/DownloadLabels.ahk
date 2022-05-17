@@ -42,6 +42,7 @@ UpdateStatus:
                 , "Green")
 		Log.Add("UpdateStatus: Successfully downloaded " COMPLETED_DOWNLOADS " file(s). There were " FAILED_DOWNLOADS " failed download(s).")
 
+		Drama.infoImageToGrayScale()
 		Window.resetAll()
 		SetTimer, UpdateStatus, Off
 

@@ -6,17 +6,32 @@ class Window
         SetBatchLines, -1
 
         this.enableInput()
+        this.hideDownloadOptions()
         this.enableOptions()
         this.disableDownload()
         this.downloadControls("Disable", "Disable", "Disable")
 
         ; Clear the "from" and "to" episodes in "Download chosen episodes"
-        GuiControl, Main2:, DownloadStart
-        GuiControl, Main2:, DownloadEnd
+        GuiControl, MainO2:, DownloadStart
+        GuiControl, MainO2:, DownloadEnd
         gidList :=
         oAriaDownloadLinks :=
 
         SetBatchLines, 10ms
+    }
+
+    hideDownloadOptions()
+    {
+        Global
+        Gui, MainO:Hide
+        GuiControl, Main:Show, StartGuide
+    }
+
+    showDownloadOptions()
+    {
+        Global
+        GuiControl, Main:Hide, StartGuide
+        Gui, MainO:Show
     }
 
     downloadControls(pauseState, resumeState, cancelState)
@@ -24,41 +39,41 @@ class Window
         Global
         
         if (pauseState ~= "Enable|Disable")
-            GuiControl, Main:%pauseState%, PauseDownloadBtn
+            GuiControl, MainO:%pauseState%, PauseDownloadBtn
         if (resumeState ~= "Enable|Disable")
-            GuiControl, Main:%resumeState%, ResumeDownloadBtn
+            GuiControl, MainO:%resumeState%, ResumeDownloadBtn
         if (cancelState ~= "Enable|Disable")
-            GuiControl, Main:%cancelState%, CancelDownloadBtn
+            GuiControl, MainO:%cancelState%, CancelDownloadBtn
     }
 
     disableOptions()
     {
         Global
-        GuiControl, Main:Disable, DownloadType
-        GuiControl, Main:Disable, OnFinish
-        GuiControl, Main2:Disable, DownloadStart
-        GuiControl, Main2:Disable, DownloadEnd
+        GuiControl, MainO:Disable, DownloadType
+        GuiControl, MainO:Disable, OnFinish
+        GuiControl, MainO2:Disable, DownloadStart
+        GuiControl, MainO2:Disable, DownloadEnd
     }
     
     enableOptions()
     {
         Global
-        GuiControl, Main:Enable, DownloadType
-        GuiControl, Main:Enable, OnFinish
-        GuiControl, Main2:Enable, DownloadStart
-        GuiControl, Main2:Enable, DownloadEnd
+        GuiControl, MainO:Enable, DownloadType
+        GuiControl, MainO:Enable, OnFinish
+        GuiControl, MainO2:Enable, DownloadStart
+        GuiControl, MainO2:Enable, DownloadEnd
     }
     
     disableDownload()
     {
         Global
-        GuiControl, Main:Disable, DownloadBtn
+        GuiControl, MainO:Disable, DownloadBtn
     }
 
     enableDownload()
     {
         Global
-        GuiControl, Main:Enable, DownloadBtn
+        GuiControl, MainO:Enable, DownloadBtn
     }
 
     disableInput()
