@@ -46,7 +46,7 @@ UpdateStatus:
 		Window.resetAll()
 		SetTimer, UpdateStatus, Off
 
-		GuiControlGet, OnFinish, Main:, OnFinish
+		GuiControlGet, OnFinish, MainO:, OnFinish
 		if (OnFinish = "THE KING")
 			TheKing()
 
