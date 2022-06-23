@@ -50,7 +50,7 @@ function CrawlPage() {
 		}
 		else {
 			let episodeName = $("#selectEpisode option:selected").text().trim();
-			currentEpisode[downloadPage] = dramaName + " " + episodeName;
+			currentEpisode[downloadPage] = episodeName;
 		}
 
 		let saveCurrentEpisode = browser.storage.local.set(currentEpisode);
