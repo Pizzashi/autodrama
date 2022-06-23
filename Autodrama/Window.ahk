@@ -50,7 +50,6 @@ class Window
     {
         Global
         GuiControl, MainO:Disable, DownloadType
-        GuiControl, MainO:Disable, OnFinish
         GuiControl, MainO2:Disable, DownloadStart
         GuiControl, MainO2:Disable, DownloadEnd
     }
@@ -59,7 +58,6 @@ class Window
     {
         Global
         GuiControl, MainO:Enable, DownloadType
-        GuiControl, MainO:Enable, OnFinish
         GuiControl, MainO2:Enable, DownloadStart
         GuiControl, MainO2:Enable, DownloadEnd
     }

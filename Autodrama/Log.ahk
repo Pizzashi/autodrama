@@ -2,21 +2,18 @@ class Log
 {
 	Init()
 	{
-		static logFile := A_ScriptDir . "\" . "Autodrama" "_" A_MMM "_" A_DD "_" A_YYYY ".log"
-		
-		FileDelete, %logFile%.old
+		FileDelete, %LOG_FILEDIR%.old
 
-		if FileExist(logFile)
-			FileMove, %logFile%, %logFile%.old
+		if FileExist(LOG_FILEDIR)
+			FileMove, %LOG_FILEDIR%, %LOG_FILEDIR%.old
 
 		titleText := "Autodrama Log for " A_MMMM " " A_DD ", " A_YYYY "`r`n"
-		FileAppend, %titleText%, %logFile%
+		FileAppend, %titleText%, %LOG_FILEDIR%
 	}
 
 	Add(addText)
 	{
-		static logFile := A_ScriptDir . "\" . "Autodrama" "_" A_MMM "_" A_DD "_" A_YYYY ".log"
 		appendText := "[" . A_Hour . ":" . A_Min . ":" . A_Sec . "]" . " " . addText . "`r`n"
-		FileAppend, %appendText%, %logFile%
+		FileAppend, %appendText%, %LOG_FILEDIR%
 	}
 }

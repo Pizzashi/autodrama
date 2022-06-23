@@ -31,11 +31,7 @@ class Helper
             oAriaDownloadLinks := []
             
         if (helperSignal = "eFeNotAvail") {
-            Remark.Update("One of the download links is down..."
-                        , "One of episodes has no valid FE download link. Please try again later or tomorrow. Igna si mama nga down ang server."
-                        , "Red"
-                        , 1)
-            Log.Add("ERROR: Helper.processSignal(): One of the download links has no valid FE server, terminating.")
+            Helper.FatalError()
             return
         }
 
@@ -56,11 +52,7 @@ class Helper
                 continue
 
             if (downloadLink = "no_download_link") {
-                Remark.Update("One of the download links is down..."
-                        , "One of episodes has no valid download link. Please try again later or tomorrow. Igna si mama nga down ang server."
-                        , "Red"
-                        , 1)
-                Log.Add("ERROR: Helper.processSignal(): One of the download links has no valid download link, terminating.")
+                Helper.FatalError()
                 return
             }
         }
@@ -70,5 +62,18 @@ class Helper
         SetTimer, CheckFiles, 1000
 
         Download.pushToAria(oAriaDownloadLinks)
+    }
+
+    FatalError()
+    {
+        SetTimer, RunDownloadLinks, Off
+        Run, % "https://kissasian.li/?AutodramaFatalError"  ; Signals the helper that we have a fatal error
+        Window.resetAll()
+
+        Remark.Update("One of the download links is down..."
+                    , "One of episodes has no valid download link. Try again later. Igna si mama nga down ang server."
+                    , "Red"
+                    , 1)
+        Log.Add("ERROR: Helper.processSignal(): One of the download links has no valid download link, terminating.")
     }
 }

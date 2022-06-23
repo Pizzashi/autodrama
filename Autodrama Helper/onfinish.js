@@ -10,20 +10,21 @@ function onError(error) {
 	console.log(`Error: ${error}`);
 }
 
-function setFinishedFlag()
+// Set mode to 1 if finished, otherwise set to 0 to remove the finished flag
+function SetFinishedFlag(mode)
 {
 	let setFinishFlag = browser.storage.local.set({
-		helperCanClose: 1
+		helperCanClose: mode
 	});
 	setFinishFlag.then(setItem, onError);
-
-    window.close(); // Only works if dom.allow_scripts_to_close_windows is set to true
 }
 
-function unsetFinishedFlag()
+function SetErrorFlag(mode)
 {
-	let removeFlag = browser.storage.local.remove("helperCanClose");
-	removeFlag.then(onRemoved, onError);
+	let setFinishFlag = browser.storage.local.set({
+		fatalError: mode
+	});
+	setFinishFlag.then(setItem, onError);
 }
 
 function checkFinishedFlag()
@@ -31,22 +32,33 @@ function checkFinishedFlag()
 	var gettingItem = browser.storage.local.get("helperCanClose");
 
 	gettingItem.then((res) => {
-		if (res.helperCanClose && window.location.href == "https://kissasian.li/")
-		{
-			let setFinishFlag = browser.storage.local.set({
-				helperCanClose: 0
-			});
-			setFinishFlag.then(setItem, onError);
-			window.close(); // Only works if dom.allow_scripts_to_close_windows is set to true
+		if (res.helperCanClose && window.location.pathname == "/")
+		{	
+			SetFinishedFlag(0);
+			// window.close() only works if dom.allow_scripts_to_close_windows is set to true
+			window.close();
 		}
 	});
 }
 
-if (window.location.href.match(/\?AnotherInstance/))
-	unsetFinishedFlag();
+//=================================Start here=================================
 
-if (window.location.href.match(/\?AutodramaIsFinished/))
-    setFinishedFlag();
+if (window.location.href.match(/\?AnotherInstance/)) {
+	SetFinishedFlag(0);
+	SetErrorFlag(0);
+}
+
+if (window.location.href.match(/\?AutodramaIsFinished/)) {
+	SetFinishedFlag(1);
+	// window.close() only works if dom.allow_scripts_to_close_windows is set to true
+    window.close();
+}
+
+if (window.location.href.match(/\?AutodramaFatalError/)) {
+	SetErrorFlag(1);
+	// window.close() only works if dom.allow_scripts_to_close_windows is set to true
+    window.close();
+}
 
 // Check for helperCanClose flag every 3 seconds
 setInterval(checkFinishedFlag, 3000)

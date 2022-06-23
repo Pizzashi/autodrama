@@ -16,21 +16,21 @@ class MainWindow
         *      START OF LOAD RESOURCES FROM THE DLL FOR THE GUI
         */
         ;================= FONTS =================
-        nSize := Dll.Read(Buffer, "resources.dll", "Fonts", "ProductSans.ttf")
+        local nSize := Dll.Read(Buffer, "resources.dll", "Fonts", "ProductSans.ttf")
         DllCall("AddFontMemResourceEx", UInt,&Buffer, UInt,nSize, Int,0, UIntP,n)
-        ScreamFont := GDI.ModifyFont(0, "FontFace=Product Sans, Height=25")
+        local ScreamFont := GDI.ModifyFont(0, "FontFace=Product Sans, Height=25")
         , HeaderFont := GDI.ModifyFont(0, "FontFace=Product Sans, Height=13") ; needs h20, h25 for best effects
         , TitleFont := GDI.ModifyFont(0, "FontFace=Product Sans, Height=16") ; h30 is good
         , h3Font := GDI.ModifyFont(0, "FontFace=Product Sans, Height=12") ; h20 for best effects
         
         ;=============== PICTURES ================
         GDI.Commence("Startup")
-        szSearch := Dll.Read(Search, "resources.dll", "Images", "search.png")
-        , hBitmapSearch := GDI.hBitmapFromBuffer(Search, szSearch)
-        , szMiku := Dll.Read(Miku, "resources.dll", "Images", "miku.png")
-        , hBitmapMiku := GDI.hBitmapFromBuffer(Miku, szMiku)
-        , szDramaPlacehldr := Dll.Read(DramaPlaceHldr, "resources.dll", "Images", "drama_placeholder.png")
-        , hBitmapDramaPlacehldr := GDI.hBitmapFromBuffer(DramaPlaceHldr, szDramaPlacehldr)
+            local szSearch := Dll.Read(Search, "resources.dll", "Images", "search.png")
+            , hBitmapSearch := GDI.hBitmapFromBuffer(Search, szSearch)
+            , szMiku := Dll.Read(Miku, "resources.dll", "Images", "miku.png")
+            , hBitmapMiku := GDI.hBitmapFromBuffer(Miku, szMiku)
+            , szDramaPlacehldr := Dll.Read(DramaPlaceHldr, "resources.dll", "Images", "drama_placeholder.png")
+            , hBitmapDramaPlacehldr := GDI.hBitmapFromBuffer(DramaPlaceHldr, szDramaPlacehldr)
         GDI.Commence("Shutdown")
         /*
         *      END OF LOAD RESOURCES FROM THE DLL FOR THE GUI
@@ -84,7 +84,7 @@ class MainWindow
         GDI.LoadFont(hCancelDownloadBtn, HeaderFont)
         ;===================== Right side of the GUI =====================
         Gui, Main:Add, Text, x420 y10 w200 h30 HwndhInformationText c287882, % "Drama Information"
-        Gui, Main:Add, Button, x420 y320 w360 h40 gOpenDownloadFolder HwndhOpenDwnldDirBtn, % "Open Downloads Folder"
+        Gui, Main:Add, Button, x420 y320 w360 h40 gOpenDownloadFolder HwndhOpenDwnldDirBtn, % "Open Download Folder"
         GDI.LoadFont(hInformationText, TitleFont)
         GDI.LoadFont(hOpenDwnldDirBtn, HeaderFont)
         ;================ Placeholder Right side of the GUI ===============

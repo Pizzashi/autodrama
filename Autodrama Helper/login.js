@@ -7,7 +7,8 @@ function onRemoved() {
 }
 
 function onError(error) {
-	console.log(`Error: ${error}`);
+	alert(`Error: ${error}`);
+	//console.log(`Error: ${error}`);
 }
 
 function FillOutCredentials()
@@ -25,9 +26,7 @@ function FillOutCredentials()
 
 function LoginChecker()
 {
-	var gettingItem = browser.storage.local.get("hadLoggedIn");
-
-	gettingItem.then((res) => {
+	browser.storage.local.get("hadLoggedIn").then((res) => {
 		if (res.hadLoggedIn)
 		{
 			// CredentialsReady() will not work if CredentialSignalSent is not declared for some reason
@@ -67,29 +66,43 @@ function CredentialsReady(mode)
 	}
 }
 
-//=================================Start here=================================
-const LAUNCHED_BY_AUTODRAMA = (window.location.href.match(/kissasian.li\/\?LaunchedByAutodrama/) || window.location.href.match(/kissasian.li\/Login\?LaunchedByAutodrama/))
-
-// Check if just logged in
-if (window.location.pathname == "/") {
-	LoginChecker();
-}
-
-// Login when needed (i.e., Autodrama requested the page AND
-// if id="topHolderBox" contains "Please [login or register]")
-if (LAUNCHED_BY_AUTODRAMA)
+function ReadyCheck()
 {
-	let userNotLoggedIn = $("#topHolderBox:contains('Please')").length;
-	let loginLink = $("a:contains('login')");
+	let LAUNCHED_BY_AUTODRAMA = (window.location.href.match(/kissasian.li\/\?LaunchedByAutodrama/) || window.location.href.match(/kissasian.li\/Login\?LaunchedByAutodrama/))
+	let BROWSER_CHECK = $("h1:contains('Checking your browser before accessing')").length;
 
-	if (userNotLoggedIn) {
-		if (window.location.pathname == "/Login") {
-			FillOutCredentials();
-		} else {
-			window.location.href = loginLink[0].href + "?LaunchedByAutodrama&PersistPage";
+	// Check if Cloudflare is still checking
+	// If it is, check again after two seconds
+	if (BROWSER_CHECK) {
+		setTimeout(ReadyCheck, 2000)
+		return
+	}
+
+	// All good, we're now in site proper
+	// Check if just logged in
+	if (window.location.pathname == "/") {
+		LoginChecker();
+	}
+
+	// Login when needed (i.e., Autodrama requested the page AND
+	// if id="topHolderBox" contains "Please [login or register]")
+	if (LAUNCHED_BY_AUTODRAMA)
+	{
+		let userNotLoggedIn = $("#topHolderBox:contains('Please')").length;
+		let loginLink = $("a:contains('login')");
+
+		if (userNotLoggedIn) {
+			if (window.location.pathname == "/Login") {
+				FillOutCredentials();
+			} else {
+				window.location.href = loginLink[0].href + "?LaunchedByAutodrama&PersistPage";
+			}
+		}
+		else {
+			CredentialsReady("pass");
 		}
 	}
-	else {
-		CredentialsReady("pass");
-	}
 }
+
+//=================================Start here=================================
+jQuery(document).ready(ReadyCheck());

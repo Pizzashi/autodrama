@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Autodrama Helper",
-  "version": "0.3.2",
+  "version": "0.4.0.0",
   "description": "Helper for Autodrama. Crawls through the sites and grabs the download links.",
   "developer": {
     "name": "Baconfry",
@@ -11,7 +11,6 @@
   "icons": {
     "48": "icons/helper-48.png"
   },
-
   "permissions": ["storage"],
   "content_scripts": [
     {
@@ -22,12 +21,12 @@
     {
       "matches": ["*://kissasian.li/Drama/*?id=*"],
       "run_at": "document_idle",
-      "js": ["redirector.js"]
+      "js": ["fe_redirector.js", "on_error.js"]
     },
     {
       "matches": ["*://www.gaobook.review/*"],
       "run_at": "document_idle",
-      "js": ["lib/jquery.js", "lib/savetodisk.js", "link_catcher.js"]
+      "js": ["lib/jquery.js", "lib/savetodisk.js", "download_link_catcher.js", "on_error.js"]
     },
     {
       "matches": ["*://kissasian.li/Special/*"],

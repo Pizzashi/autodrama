@@ -2,14 +2,7 @@ class ComboBox
 {
     readPrevHistory()
     {
-        if !FileExist("configuration.ini") {
-            FileAppend,, configuration.ini
-            return
-        }
-
-        IniRead, prevHistory, configuration.ini, UserData, SearchHistory, %A_Space%
-        COMBO_BOX_HISTORY := prevHistory
-
+        COMBO_BOX_HISTORY := Config.Read("UserData", "SearchHistory")
         return
     }
 
@@ -47,12 +40,7 @@ class ComboBox
 
         ; The pipe (|) at the start is necessary for the DDL options to be replaced
         ; otherwise, they will be appended at the other options
-        try GuiControl, Main:, DramaLink, % "|" COMBO_BOX_HISTORY
-        catch
-            Log.Add("ERROR: ComboBox.updateHistory(): The app could not edit the DDL for the ComboBox (vDramaLink).")
-        
-        try IniWrite, %COMBO_BOX_HISTORY%, configuration.ini, UserData, SearchHistory
-        catch
-            Log.Add("ERROR: ComboBox.updateHistory(): The app could not write COMBO_BOX_HISTORY into SearchHistory in configuration.ini")
+        GuiControl, Main:, DramaLink, % "|" COMBO_BOX_HISTORY
+        Config.Write("UserData", "SearchHistory", COMBO_BOX_HISTORY)
     }
 }

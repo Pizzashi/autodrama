@@ -41,27 +41,21 @@ UpdateStatus:
                 . "You may find the downloaded episodes in " . """" . oDramaInfo[1] . " (" oDramaInfo[2] ")" . """" . "."
                 , "Green")
 		Log.Add("UpdateStatus: Successfully downloaded " COMPLETED_DOWNLOADS " file(s). There were " FAILED_DOWNLOADS " failed download(s).")
-
-		Drama.infoImageToGrayScale()
-		Window.resetAll()
+		
 		SetTimer, UpdateStatus, Off
-
-		GuiControlGet, OnFinish, MainO:, OnFinish
-		if (OnFinish = "THE KING")
-			TheKing()
-
+		Download.onFinish()	
+		
 		return
-    
 	}
 	if !(_speed) {
-		; 100 means keep trying for ~100 seconds
-		if (failedRetries > 100)
+		; 120 means keep trying for ~120 seconds
+		if (failedRetries > 120)
 		{
 			Remark.Update("The download has failed!"
 					, "The app cannot download the files, your internet may be slow or disconnected. Try again later."
 					, "Red"
 					, 1)
-			Log.Add("ERROR: UpdateStatus cannot download episodes due to problems (failedRetries exceeded 100 times).")
+			Log.Add("ERROR: UpdateStatus cannot download episodes due to problems (failedRetries exceeded 120 times).")
 			
 			failedRetries := 0
 			aria2.forceShutdown()
@@ -79,4 +73,19 @@ UpdateStatus:
                 . dlInfo[1]"`n"dlInfo[2]
                 , "Blue")
     }
-Return
+return
+
+RunDownloadLinks:
+	; Timeout for 30 seconds every 5 episodes to avoid error messages
+	if (openEpisodes >= 5) {
+		Sleep, 30000
+		openEpisodes := 0
+	}
+
+	Run, % oDownloadLinks[launchedEpisodeNumber]
+	openEpisodes++
+	launchedEpisodeNumber++
+
+	if (launchedEpisodeNumber > oDownloadLinks.Length())
+		SetTimer, RunDownloadLinks, Off
+return

@@ -14,11 +14,11 @@ LaunchAdvancedSettings:
         return
     }
 
+    AdvancedSettings.Launch()
+
     Remark.Update("Successfully launched the advanced settings."
                     , "Please do proceed with caution."
                     , "Green")
-
-    AdvancedSettings.Launch()
 return
 
 ResumeDownloads:
@@ -146,7 +146,7 @@ SearchDrama:
     Remark.Update("Got the drama information!"
                 , "Look at the drama details. If this is the drama that you intend to download, then modify the Options and hit download!"
                 , "Green")
-    Log.Add("Successfully processed drama information and download links.")
+    Log.Add("SearchDrama: Successfully processed drama information and download links.")
     ComboBox.updateHistory(DramaLink) ; Record the last link to history
     Window.enableInput()
     Window.enableDownload()
@@ -155,6 +155,7 @@ return
 
 DownloadDrama:
     Gui, Main:Submit, NoHide
+    Gui, MainO:Submit, NoHide
     Gui, MainO2:Submit, NoHide
     
     ; Check for invalid input

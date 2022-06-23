@@ -1,6 +1,7 @@
 OnMouseMove(wParam, lParam, msg, hWnd)
 {
     Global
+    ListLines, 0
     static hasSetCursor
     if (hWnd = hSearchIcon)
     {

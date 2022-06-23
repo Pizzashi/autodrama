@@ -9,9 +9,11 @@ class Download
     {
         Global
 
+        Gui, Main:Submit, NoHide
+        Gui, MainO:Submit, NoHide
+        Gui, MainO2:Submit, NoHide
         ; Note at this point, +AlwaysOnTop is still on.
         ; The flag was triggered at Helper.readyCredentials()
-
         Remark.Update("Gathering the download links..."
                     , "Please wait as the app gathers the download links for the episodes. This may take a while, so feel free to make some milk or take a poop."
                     , "Blue")
@@ -24,19 +26,20 @@ class Download
 
         SetTimer, CheckFiles, 1000
 
-        local epNo := 0
-        Loop % oDownloadLinks.Length()
-        {
-            ; Timeout for 30 seconds every 5 episodes to avoid error messages
-            if (epNo >= 5) {
-                Sleep, 30000
-                epNo := 0
-            }
+        launchedEpisodeNumber := 1
+        SetTimer, RunDownloadLinks, 2000
+    }
 
-            Run, % oDownloadLinks[A_Index]
-            epNo++
-            Sleep, 2000
-        }
+    onFinish()
+    {
+        Global
+
+        Drama.infoImageToGrayScale()
+		Window.resetAll()
+        
+		GuiControlGet, OnFinish, MainO:, OnFinish
+		finishedDownload := (OnFinish = "THE KING") ? TheKing()
+					      : (OnFinish = "Notify Daisy") ? Join.Notify("Daisy", """" oDramaInfo[1] """" . " has finished downloading.") ; oDramaInfo[1] is the drama title
     }
 
     startAria()
@@ -48,13 +51,15 @@ class Download
             , "Blue")
 
         local SCRT_TOKEN := "xRyEkIylIPAxgw9Yo6NNnpvajNvAHRZPqvS1lwgrOXX9K6pNlSdBQt4w4y73pYfL"
-        ;    , global_options := "max-concurrent-downloads=2`r`n"
-        ;                    . "max-overall-download-limit=500K"
-        , global_options := "max-concurrent-downloads=2"
-        , oGlobalOptions := this.Options2obj(global_options)
+            , global_options := "max-concurrent-downloads=" MAX_CONCURRENT_DWNL     . "`r`n"
+                              . "max-overall-download-limit=" DWNLD_SPEED_LIM "K"   . "`r`n"
+                              . CUSTOM_ARIA_OPTIONS
+        ;, global_options := "max-concurrent-downloads=2"
+            , oGlobalOptions := this.Options2obj(global_options)
 
-        Run, %ComSpec% /c aria2c.exe --enable-rpc --rpc-listen-all --rpc-secret=%SCRT_TOKEN% --stop-with-process=%AUTODRAMA_PID% -c,, Hide UseErrorLevel, pidAria
-        if (ErrorLevel) {
+        try Run, %ComSpec% /c aria2c.exe --enable-rpc --rpc-listen-all --rpc-secret=%SCRT_TOKEN% --stop-with-process=%AUTODRAMA_PID% -c,, Hide UseErrorLevel, pidAria
+        catch
+        {
             Log.Add("ERROR: Download.startAria(): Aria2c could not be started.")
             Remark.Update("Error! Error! Error!"
                         , "Aria2c could not be started for some reason. Try closing the app and trying again."
