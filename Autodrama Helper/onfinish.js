@@ -7,7 +7,11 @@ function onRemoved() {
 }
 
 function onError(error) {
-	console.log(`Error: ${error}`);
+	alert(`Error: ${error}`);
+}
+
+function onCleared() {
+	console.log("Successfully cleared local storage.");
 }
 
 // Set mode to 1 if finished, otherwise set to 0 to remove the finished flag
@@ -41,6 +45,12 @@ function checkFinishedFlag()
 	});
 }
 
+function clearLocalStorage()
+{
+	var clearStorage = browser.storage.local.clear();
+	clearStorage.then(onCleared, onError);
+}
+
 //=================================Start here=================================
 
 if (window.location.href.match(/\?AnotherInstance/)) {
@@ -49,12 +59,18 @@ if (window.location.href.match(/\?AnotherInstance/)) {
 }
 
 if (window.location.href.match(/\?AutodramaIsFinished/)) {
+	// Clear the local storage when the session ends
+	clearLocalStorage()
+
 	SetFinishedFlag(1);
 	// window.close() only works if dom.allow_scripts_to_close_windows is set to true
     window.close();
 }
 
 if (window.location.href.match(/\?AutodramaFatalError/)) {
+	// Clear the local storage when there is an error
+	clearLocalStorage()
+
 	SetErrorFlag(1);
 	// window.close() only works if dom.allow_scripts_to_close_windows is set to true
     window.close();

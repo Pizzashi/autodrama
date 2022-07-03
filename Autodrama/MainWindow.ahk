@@ -60,7 +60,7 @@ class MainWindow
         Gui, MainO:Add, Text, x20 y+10 w75, % "Mode"
         Gui, MainO:Add, DDL, x+20 yp-3 w220 vDownloadType gChangeDownloadType, % "Download all episodes||Download chosen episodes"
         Gui, MainO:Add, Text, x20 y+15 w75, % "On finish"
-        Gui, MainO:Add, DDL, x+20 yp-3 w220 vOnFinish, % "THE KING|Notify Daisy|Do nothing||"
+        Gui, MainO:Add, DDL, x+20 yp-3 w220 vOnFinish, % "THE KING|Notify " DLEND_NOTIFY_WHO "|Do nothing||"
         GDI.LoadFont(hOptionsText, TitleFont)
         ;=== Child GUI to hide it in one go ======
         Gui, MainO2:New, ParentMainO -Caption

@@ -42,7 +42,7 @@ class Download
 
 		GuiControlGet, OnFinish, MainO:, OnFinish
 		finishedDownload := (OnFinish = "THE KING") ? TheKing()
-					      : (OnFinish = "Notify Daisy") ? Join.Notify("Daisy", """" oDramaInfo[1] """" . " has finished downloading.") ; oDramaInfo[1] is the drama title
+					      : InStr(OnFinish, "Notify") ? Join.Notify(DLEND_NOTIFY_WHO, """" oDramaInfo[1] """" . " has finished downloading.") ; oDramaInfo[1] is the drama title
     }
 
     startAria()
@@ -93,24 +93,16 @@ class Download
     {
         Global
 
-        Log.Add("Download.pushToAria(): Processing download links, " . oAriaDownloadLinks.Length() . " out of " . oDownloadLinks.Length())
-        if (oAriaDownloadLinks.Length() < oDownloadLinks.Length()) {
-            return
-        }
-
-        ;===================Got everything===================
         Run, % "https://kissasian.li/?AutodramaIsFinished" ; This will close the main window
 
         if !IsObject(gidList)
             gidList := []
-        SetTimer, CheckFiles, Off
-        Gui, Main:-AlwaysOnTop
-        
-        TOTAL_DOWNLOADS := oAriaDownloadLinks.Length()
+      
+        TOTAL_DOWNLOADS := oAriaDownloadLinks.Count()
         COMPLETED_DOWNLOADS := 0
         FAILED_DOWNLOADS := 0
 
-        Log.Add("Download.pushAria(): Attempting to download " TOTAL_DOWNLOADS " file(s).")
+        Log.Add("Download.pushToAria(): Attempting to download " TOTAL_DOWNLOADS " file(s).")
 
         for key, value in oAriaDownloadLinks
         {

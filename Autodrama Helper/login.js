@@ -8,7 +8,6 @@ function onRemoved() {
 
 function onError(error) {
 	alert(`Error: ${error}`);
-	//console.log(`Error: ${error}`);
 }
 
 function FillOutCredentials()

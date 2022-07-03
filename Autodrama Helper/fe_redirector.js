@@ -8,7 +8,6 @@ function onCleared() {
 
 function onError(error) {
 	alert(`Error: ${error}`);
-	//console.log(`Error: ${error}`);
 }
 
 function CrawlPage() {

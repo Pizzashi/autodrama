@@ -3,9 +3,9 @@
 ;@Ahk2Exe-SetMainIcon Main.ico
 ;@Ahk2Exe-SetCopyright Copyright © 2022 Baconfry
 ;@Ahk2Exe-SetCompanyName Furaico
-;@Ahk2Exe-SetVersion 0.4.0
+;@Ahk2Exe-SetVersion 0.4.2
 ;===========================================================;
-global AUTODRAMA_VERSION := "0.4.0"
+global AUTODRAMA_VERSION := "0.4.2"
 
 #NoEnv
 SetWorkingDir %A_ScriptDir%
@@ -54,6 +54,8 @@ global AUTODRAMA_PID          := ErrorLevel                      ; The script's 
      , MAX_CONCURRENT_DWNL    := (maxConcDwnl := Config.Read("AppData", "MaxDownloads")) 
                               ? maxConcDwnl : 2
      , CUSTOM_ARIA_OPTIONS    := Config.Read("AppData", "AriaOptions")
+     , DLEND_NOTIFY_WHO       := (notifyWho := Config.Read("AppData", "NotificationRecipient"))
+                              ? notifyWho : "Daisy"
      , POP_UP_ONFINISH        := (popUpOnFinish := Config.Read("AppData", "PopUpOnFinish"))
                               ? popUpOnFinish : "On"
 

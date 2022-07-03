@@ -47,6 +47,28 @@ SaveDownloadOptions:
     GuiControl, AdvSet:, SaveDlOptionsBtn, % "Save download options"
 return
 
+ChangeNotifRecipient:
+    Gui, AdvSet:Submit, NoHide
+    if (DLEND_NOTIFY_WHO != NotifyWho)
+    {
+        DLEND_NOTIFY_WHO := NotifyWho
+        Config.Write("AppData", "NotificationRecipient", DLEND_NOTIFY_WHO)
+
+        ; Update the GUI control with the new recipient
+        GuiControlGet, selectedItem, MainO:, OnFinish
+        
+        if (selectedItem = "THE KING") {
+            GuiControl, MainO:, OnFinish, % "|THE KING||Notify " DLEND_NOTIFY_WHO "|Do Nothing"
+        }
+        else if (selectedItem = "Do nothing") {
+            GuiControl, MainO:, OnFinish, % "|THE KING|Notify " DLEND_NOTIFY_WHO "|Do nothing||"
+        }
+        else {
+            GuiControl, MainO:, OnFinish, % "|THE KING|Notify " DLEND_NOTIFY_WHO "||Do nothing|"
+        }
+    }
+return
+
 ChangePopUpOnFinish:
     Gui, AdvSet:Submit, NoHide
     if (POP_UP_ONFINISH != PopUpOnFin)

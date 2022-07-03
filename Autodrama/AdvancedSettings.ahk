@@ -28,6 +28,9 @@ class AdvancedSettings
         ;===================Application Settings===================;
         Gui, Tab, 2 ; Application tab
 
+        Gui, AdvSet:Add, Text, x22 y+10, % "Notification recipient"
+        Gui, AdvSet:Add, DDL, x200 yp-2 w100 gChangeNotifRecipient vNotifyWho, % (DLEND_NOTIFY_WHO = "Daisy") ? "Daisy||Baconfry" : "Daisy|Baconfry||"
+
         Gui, AdvSet:Add, Text, x22 y+10, % "App popup on finish"
         Gui, AdvSet:Add, DDL, x200 yp-2 w100 gChangePopUpOnFinish vPopUpOnFin, % (POP_UP_ONFINISH = "Off") ? "On|Off||" : "On||Off"
 
