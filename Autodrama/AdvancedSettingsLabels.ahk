@@ -23,15 +23,14 @@ SaveDownloadOptions:
     if (aria2.getVersion().result.version)
     {
         ; If this is the case, the application needs to be restarted
-        if (CustDlOptns != CUSTOM_ARIA_OPTIONS || DlDir != MOVIE_DOWNLOAD_PATH)
-            Msgbox, 0, % " Notice", % "The custom download options and download directory modifications will be reflected when you restart the app."
+        if (CustDlOptns != CUSTOM_ARIA_OPTIONS || DlDir != MOVIE_DOWNLOAD_PATH || MaxConcDl != MAX_CONCURRENT_DWNL)
+            Msgbox, 0, % " Notice", % "The custom download options, maximum concurrent downloads, and download directory modifications will be reflected when you restart the app."
 
-        newOptions := "max-concurrent-downloads=" MaxConcDl "`r`n"
-                    . "max-overall-download-limit=" DlSpdLim "K"
+        newOptions := "max-overall-download-limit=" DlSpdLim "K"
         oNewOptions := Download.Options2obj(newOptions)
         if !(aria2.changeGlobalOption(oNewOptions).result)
         {
-            Msgbox, 0, % " Error", % "The maximum concurrent downloads and speed limit could not be saved to Aria. Please restart the application for the changes to take effect."
+            Msgbox, 0, % " Error", % "The download speed limit could not be saved to Aria. Please restart the application for the changes to take effect."
         }
 
     }
@@ -48,12 +47,12 @@ SaveDownloadOptions:
     GuiControl, AdvSet:, SaveDlOptionsBtn, % "Save download options"
 return
 
-ChangePopUpNotif:
+ChangePopUpOnFinish:
     Gui, AdvSet:Submit, NoHide
-    if (POP_NOTIF_ONFINISH != PopUpOnFin)
+    if (POP_UP_ONFINISH != PopUpOnFin)
     {
-        POP_NOTIF_ONFINISH := PopUpOnFin
-        Config.Write("AppData", "PopUpOnFinish", PopUpOnFin)
+        POP_UP_ONFINISH := PopUpOnFin
+        Config.Write("AppData", "PopUpOnFinish", POP_UP_ONFINISH)
     }
 return
 

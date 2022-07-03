@@ -54,7 +54,8 @@ global AUTODRAMA_PID          := ErrorLevel                      ; The script's 
      , MAX_CONCURRENT_DWNL    := (maxConcDwnl := Config.Read("AppData", "MaxDownloads")) 
                               ? maxConcDwnl : 2
      , CUSTOM_ARIA_OPTIONS    := Config.Read("AppData", "AriaOptions")
-
+     , POP_UP_ONFINISH        := (popUpOnFinish := Config.Read("AppData", "PopUpOnFinish"))
+                              ? popUpOnFinish : "On"
 
 FileCheck("resources.dll, aria2c.exe")                           ; Check the existence of the required files
 Config.Init()                                                    ; Set up configuration.ini

@@ -24,12 +24,15 @@ class AdvancedSettings
 
         Gui, AdvSet:Add, Text, x22 y+10, % "Custom options (one option per line)"
         Gui, AdvSet:Add, Edit, x22 y+5 w379 h100 vCustDlOptns, % CUSTOM_ARIA_OPTIONS
-        Gui, AdvSet:Add, Button, x115 y+10 w200 vSaveDlOptionsBtn gSaveDownloadOptions, % "Save download options"
+        Gui, AdvSet:Add, Button, x115 y+10 w200 gSaveDownloadOptions vSaveDlOptionsBtn, % "Save download options"
         ;===================Application Settings===================;
         Gui, Tab, 2 ; Application tab
 
+        Gui, AdvSet:Add, Text, x22 y+10, % "App popup on finish"
+        Gui, AdvSet:Add, DDL, x200 yp-2 w100 gChangePopUpOnFinish vPopUpOnFin, % (POP_UP_ONFINISH = "Off") ? "On|Off||" : "On||Off"
+
         Gui, AdvSet:Add, Text, x22 y+10, % "Clear search history"
-        Gui, AdvSet:Add, Button, x200 yp-2 w100 vClrSearchBtn gClearSearchHistory, % "Clear"
+        Gui, AdvSet:Add, Button, x200 yp-2 w100 gClearSearchHistory vClrSearchBtn, % "Clear"
 
         ;===================Application Settings===================;
         Gui, Tab, 3 ; Log tab

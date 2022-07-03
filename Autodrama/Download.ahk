@@ -37,6 +37,9 @@ class Download
         Drama.infoImageToGrayScale()
 		Window.resetAll()
         
+        if (POP_UP_ONFINISH = "On")
+            WinActivate, ahk_id %hMainGui%
+
 		GuiControlGet, OnFinish, MainO:, OnFinish
 		finishedDownload := (OnFinish = "THE KING") ? TheKing()
 					      : (OnFinish = "Notify Daisy") ? Join.Notify("Daisy", """" oDramaInfo[1] """" . " has finished downloading.") ; oDramaInfo[1] is the drama title
@@ -45,6 +48,10 @@ class Download
     startAria()
     {
         Global
+        
+        ; Check if Aria is already started
+        if (aria2.getVersion().result.version)
+            return 1
         
         Remark.Update("Starting Aria2c..."
             , "Please wait as the app tries to start the downloader."
