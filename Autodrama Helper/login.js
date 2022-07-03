@@ -95,7 +95,7 @@ function ReadyCheck()
 			if (window.location.pathname == "/Login") {
 				FillOutCredentials();
 			} else {
-				window.location.href = loginLink[0].href + "?LaunchedByAutodrama&PersistPage";
+				window.location.href = loginLink[0].href + "?LaunchedByAutodrama";
 			}
 		}
 		else {
