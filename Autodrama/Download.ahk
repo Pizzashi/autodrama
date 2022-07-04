@@ -30,7 +30,7 @@ class Download
         SetTimer, RunDownloadLinks, 2000
     }
 
-    onFinish()
+    onFinish(downloadSucess := 1)
     {
         Global
 
@@ -41,8 +41,16 @@ class Download
             WinActivate, ahk_id %hMainGui%
 
 		GuiControlGet, OnFinish, MainO:, OnFinish
-		finishedDownload := (OnFinish = "THE KING") ? TheKing()
-					      : InStr(OnFinish, "Notify") ? Join.Notify(DLEND_NOTIFY_WHO, """" oDramaInfo[1] """" . " has finished downloading.") ; oDramaInfo[1] is the drama title
+        if (downloadFailed) {
+            failedDownload := (OnFinish = "THE KING")
+                            ? TheKing() : InStr(OnFinish, "Notify")
+                            ? Join.Notify(DLEND_NOTIFY_WHO, "There was an error in downloading " . """" oDramaInfo[1] """" . ".") ; oDramaInfo[1] is the drama title    
+        } else {
+            finishedDownload := (OnFinish = "THE KING")
+                            ? TheKing()
+					        : InStr(OnFinish, "Notify")
+                            ? Join.Notify(DLEND_NOTIFY_WHO, """" oDramaInfo[1] """" . " has finished downloading.") ; oDramaInfo[1] is the drama title
+        }
     }
 
     startAria()

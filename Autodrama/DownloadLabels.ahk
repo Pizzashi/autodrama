@@ -3,7 +3,7 @@ UpdateStatus:
 	
 	for i, dl in gidList
 	{
-		if (i > 2)
+		if (i > MAX_CONCURRENT_DWNL)
 			break
 
         if !IsObject(dlInfo)
@@ -59,6 +59,7 @@ UpdateStatus:
 			
 			failedRetries := 0
 			aria2.forceShutdown()
+			Download.onFinish(0)
 			SetTimer, UpdateStatus, Off
 			return
 		}
