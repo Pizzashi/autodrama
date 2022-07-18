@@ -34,10 +34,17 @@ class AdvancedSettings
         Gui, AdvSet:Add, Text, x22 y+10, % "App popup on finish"
         Gui, AdvSet:Add, DDL, x200 yp-2 w100 gChangePopUpOnFinish vPopUpOnFin, % (POP_UP_ONFINISH = "Off") ? "On|Off||" : "On||Off"
 
+        Gui, AdvSet:Add, Text, x22 y+10, % "KissAsian hostname"
+        Gui, AdvSet:Add, Edit, x200 yp-2 w100 vSiteHostname, % DRAMA_HOSTNAME
+        Gui, AdvSet:Add, Button, x+10 yp+0 w70 vChangeHostnameBtn gChangeHostname, % "Save"
+        Gui, AdvSet:Font, italic
+        Gui, AdvSet:Add, Text, x22 y+5, % "You must use KissAsian as the drama provider!"
+        Gui, AdvSet:Font, norm
+
         Gui, AdvSet:Add, Text, x22 y+10, % "Clear search history"
         Gui, AdvSet:Add, Button, x200 yp-2 w100 gClearSearchHistory vClrSearchBtn, % "Clear"
 
-        ;===================Application Settings===================;
+        ;===================Logging===================;
         Gui, Tab, 3 ; Log tab
 
         Gui, AdvSet:Add, Text, x22 y+10, % "Clear logs (except latest)"
@@ -52,25 +59,25 @@ class AdvancedSettings
 
     buildLogList(rebuild := 0)
     {
-        OLogsList := []
+        oLogsList := []
         Loop, Files, *.*
         {
             if (A_LoopFileExt != "log")
                 continue
             
-            OLogsList.Push(A_LoopFileName)
+            oLogsList.Push(A_LoopFileName)
         }
-        Loop, % OLogsList.Length()
+        Loop, % oLogsList.Length()
         {
             if (A_Index = 1)
             {
-                logsList := OLogsList[OLogsList.Length()] . "||"
-                if (OLogsList.Length() = 1)
+                logsList := oLogsList[oLogsList.Length()] . "||"
+                if (oLogsList.Length() = 1)
                     return rebuild ? "|" . logsList : logsList  ; No need to RTrim if there's only one entry
             }
             if (A_Index >= 10)
                 break
-            logsList := logsList . OLogsList[OLogsList.Length() - A_Index] "|"
+            logsList := logsList . oLogsList[oLogsList.Length() - A_Index] "|"
         }
         return rebuild ? "|" . RTrim(logsList, "|") : RTrim(logsList, "|")
     }

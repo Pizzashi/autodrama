@@ -3,9 +3,9 @@
 ;@Ahk2Exe-SetMainIcon Main.ico
 ;@Ahk2Exe-SetCopyright Copyright © 2022 Baconfry
 ;@Ahk2Exe-SetCompanyName Furaico
-;@Ahk2Exe-SetVersion 0.4.2.1
+;@Ahk2Exe-SetVersion 0.4.2.2
 ;===========================================================;
-global AUTODRAMA_VERSION := "0.4.2.1"
+global AUTODRAMA_VERSION := "0.4.2.2"
 
 #NoEnv
 SetWorkingDir %A_ScriptDir%
@@ -34,11 +34,12 @@ ListLines Off
 #Include MainWindow.ahk
 #Include Pastebin.ahk
 #Include PlaySound.ahk
+#Include ClearObjects.ahk
 #Include SelectFolderEx.ahk
 #Include UrlEncode.ahk
 
 Process, Exist                                                   ; Retrieve the script's PID
-global AUTODRAMA_PID          := ErrorLevel                      ; The script's PID is in ErrorLevel
+global AUTODRAMA_PID          := ErrorLevel                      ; The script's PID is stored in ErrorLevel
      , FIREFOX_DOWNLOAD_PATH  := GetFirefoxDownloadFolder()
      , USER_DOWNLOAD_PATH     := GetUserDownloadFolder()
      , COMBO_BOX_HISTORY      := ""                              ; Used in ComboBoxHistory.ahk
@@ -46,7 +47,7 @@ global AUTODRAMA_PID          := ErrorLevel                      ; The script's 
      , ENABLE_SEARCH_DRAMA    := 1                               ; Used as a way to disable the search button
      , LOG_FILEDIR            := A_ScriptDir . "\"               ; The file directory of the log file for the current script instance (i.e. the latest log file)
                               . "Autodrama" "_" A_MMM "_" A_DD "_" A_YYYY ".log"
-     ; The settings below this are set in advanced settings
+     ; The variables below are set in advanced settings
      , DWNLD_SPEED_LIM        := (dwnlSpdLim := Config.Read("AppData", "SpeedLimit"))
                               ? dwnlSpdLim : 0
      , MOVIE_DOWNLOAD_PATH    := (movieDwnlPath := Config.Read("AppData", "DownloadPath"))
@@ -58,6 +59,8 @@ global AUTODRAMA_PID          := ErrorLevel                      ; The script's 
                               ? notifyWho : "Daisy"
      , POP_UP_ONFINISH        := (popUpOnFinish := Config.Read("AppData", "PopUpOnFinish"))
                               ? popUpOnFinish : "On"
+     , DRAMA_HOSTNAME         := (SiteHostname := Config.Read("AppData", "SiteHostname"))
+                              ? SiteHostname : "kissasian.li"
 
 FileCheck("resources.dll, aria2c.exe")                           ; Check the existence of the required files
 Config.Init()                                                    ; Set up configuration.ini

@@ -14,10 +14,17 @@ SaveDownloadOptions:
     Gui, AdvSet:Submit, NoHide
     GuiControl, AdvSet:, SaveDlOptionsBtn, % "Saving settings..."
 
+    ; Save options to disk
     Config.Write("AppData", "SpeedLimit", DlSpdLim)
     Config.Write("AppData", "MaxDownloads", MaxConcDl)
     Config.Write("AppData", "AriaOptions", CustDlOptns)
     Config.Write("AppData", "DownloadPath", DlDir)
+    
+    ; Save options to variables
+    CUSTOM_ARIA_OPTIONS     := CustDlOptns
+    , MOVIE_DOWNLOAD_PATH   := DlDir
+    , MAX_CONCURRENT_DWNL   := MaxConcDl
+    , DWNLD_SPEED_LIM       := DlSpdLim
 
     ; If this returns anything, it means Aria is active and must be restarted
     if (aria2.getVersion().result.version)
@@ -33,13 +40,6 @@ SaveDownloadOptions:
             Msgbox, 0, % " Error", % "The download speed limit could not be saved to Aria. Please restart the application for the changes to take effect."
         }
 
-    }
-    else
-    {
-        CUSTOM_ARIA_OPTIONS     := CustDlOptns
-        , MOVIE_DOWNLOAD_PATH   := DlDir
-        , MAX_CONCURRENT_DWNL   := MaxConcDl
-        , DWNLD_SPEED_LIM       := DlSpdLim
     }
 
     GuiControl, AdvSet:, SaveDlOptionsBtn, % "Options saved!"
@@ -76,6 +76,19 @@ ChangePopUpOnFinish:
         POP_UP_ONFINISH := PopUpOnFin
         Config.Write("AppData", "PopUpOnFinish", POP_UP_ONFINISH)
     }
+return
+
+ChangeHostname:
+    Gui, AdvSet:Submit, NoHide
+    if (DRAMA_HOSTNAME != SiteHostname)
+    {
+        DRAMA_HOSTNAME := SiteHostname
+        Config.Write("AppData", "SiteHostname", DRAMA_HOSTNAME)
+    }
+
+    GuiControl, AdvSet:, ChangeHostnameBtn, % "Saved!"
+    Sleep, 1500
+    GuiControl, AdvSet:, ChangeHostnameBtn, % "Save"
 return
 
 ClearSearchHistory:

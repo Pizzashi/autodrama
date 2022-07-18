@@ -83,6 +83,8 @@ SearchDrama:
 
     Gui, Main:Submit, NoHide
     
+    ClearObjects() ; Reset objects
+
     ; Check for invalid input
     if (!RegExMatch(DramaLink, "(https|http):\/\/kissasian\.(\w+)\/(Drama|Movie)\/.*") || RegExMatch(DramaLink, "(https|http):\/\/kissasian\.(\w+).+(https|http):\/\/kissasian\.(\w+)"))
     {
@@ -158,10 +160,27 @@ DownloadDrama:
     Gui, MainO:Submit, NoHide
     Gui, MainO2:Submit, NoHide
     
-    ; Check for invalid input
     if (DownloadType = "Download chosen episodes") {
+        /**
+         * Infer DownloadEnd if it is empty.
+         *
+         * If DownloadEnd is empty, it means the user only wants to download one episode,
+         * that is, DownloadStart.
+         */
+        if (!DownloadEnd) {
+            DownloadEnd := DownloadStart
+            GuiControl, MainO2:, DownloadEnd, % DownloadEnd
+        }
+        
+        /**
+         * Check for invalid input. The tracked invalid inputs are:
+         * - DownloadStart is greater than DownloadEnd
+         * - DownloadStart is empty
+         * - DownloadStart is less than 1
+         * - DownloadEnd is greater than the last episode
+         */
         if ( (DownloadStart > DownloadEnd)
-          || (!(DownloadStart) || !(DownloadEnd))
+          || (!DownloadStart)
           || (DownloadStart < 1)
           || (DownloadEnd > oDownloadLinks.Length()) ) {
             Remark.Update("There's an error on the chosen download range."

@@ -1,4 +1,5 @@
 CheckFiles:
+    ListLines, Off  ; This thread does not need to be logged
     /**
      *  The Gui, Submit is set because
      *  Helper.processSignal() needs the values of these portions

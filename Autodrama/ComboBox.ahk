@@ -3,6 +3,7 @@ class ComboBox
     readPrevHistory()
     {
         COMBO_BOX_HISTORY := Config.Read("UserData", "SearchHistory")
+        
         return
     }
 

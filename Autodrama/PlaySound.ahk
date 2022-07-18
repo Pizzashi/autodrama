@@ -1,5 +1,10 @@
 TheKing(playMusic := 1)
 {
+    ; Because +OwnDialogs is unique for each thread, this must be declared here
+    Gui, Main:+OwnDialogs
+    ; The actual music length is 136.463687 seconds (value retrieved using sox)
+    static MUSIC_LENGTH := 136
+
     if !(playMusic) {
         Log.Add("TheKing(): Successfully stopped the song (User called with 0 parameter).")
         PlaySound(0) ; Stop the song
@@ -11,7 +16,14 @@ TheKing(playMusic := 1)
     if (sucessfulPlay) {
         Log.Add("TheKing(): Successfully played the song.")
 
-        MsgBox, 8192, % " Your download is complete!", % "To stop playing THE KING, simply click OK or close this message box.", 136
+        /**
+         * DO NOT set a Task Modal flag in the MsgBox,
+         * this will cause the app to freeze when MsgBox times out.
+         * Use Gui, Main:+OwnDialogs instead (see above)
+         */
+        MsgBox, 0, % " Your download is complete!"
+                    , % "To stop playing THE KING, simply click OK or close this message box."
+                    , % MUSIC_LENGTH
         PlaySound(0) ; Stop the song
 
         Log.Add("TheKing(): Successfully stopped the song.")

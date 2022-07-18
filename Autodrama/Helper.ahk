@@ -8,12 +8,13 @@ class Helper
                     , "Blue")
         Log.Add("Helper.readyCredentials(): Checking for credentials...")
 
-        static homePage := "https://kissasian.li/?LaunchedByAutodrama?AnotherInstance"
-        /* 
+        homePage := "https://" . DRAMA_HOSTNAME . "/?LaunchedByAutodrama?AnotherInstance"
+        /**
          * To prevent mishaps, the helper will check only these links to check for logins:
-         * "https://kissasian.li/?LaunchedByAutodrama"
-         * "https://kissasian.li/Login?LaunchedByAutodrama"
-        */
+         * "https://DRAMA_HOSTNAME/?LaunchedByAutodrama"
+         * "https://DRAMA_HOSTNAME/Login?LaunchedByAutodrama"
+         * The hostname is stored in the global variable DRAMA_HOSTNAME
+         */
         Run, % homePage
         SetTimer, CheckFiles, 1000
     }
@@ -78,6 +79,9 @@ class Helper
             }
         }
 
+        Remark.Update("Gathering the download links... " . oAriaDownloadLinks.Count() . " out of " . oDownloadLinks.Count()
+                    , "Please wait as the app gathers the download links for the episodes. This may take a while, so feel free to make some milk or take a poop."
+                    , "Blue")
         Log.Add("Helper.processSignal(): Processing download links, " . oAriaDownloadLinks.Count() . " out of " . oDownloadLinks.Count())
         Log.Add("Helper.processSignal(): Added aria2 download link for " fileName "`n`t`tDownload link is: " downloadLink)      
         SetTimer, CheckFiles, 1000
@@ -94,7 +98,7 @@ class Helper
     FatalError()
     {
         SetTimer, RunDownloadLinks, Off
-        Run, % "https://kissasian.li/?AutodramaFatalError"  ; Signals the helper that we have a fatal error
+        Run, % "https://" DRAMA_HOSTNAME "/?AutodramaFatalError"  ; Signals the helper that we have a fatal error
         Window.resetAll()
 
         Remark.Update("One of the download links is down..."

@@ -70,7 +70,7 @@ UpdateStatus:
     }
     else {
         Remark.Update("Downloading files at " . Download.FormatByteSize(_speed) . "/s"
-                , "There are " COMPLETED_DOWNLOADS " completed download(s) and " FAILED_DOWNLOADS " failed download(s).`n"
+                , "There are " COMPLETED_DOWNLOADS " completed download(s) and " FAILED_DOWNLOADS " failed download(s) out of " TOTAL_DOWNLOADS ".`n"
                 . dlInfo[1]"`n"dlInfo[2]
                 , "Blue")
     }

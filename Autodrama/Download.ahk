@@ -101,7 +101,7 @@ class Download
     {
         Global
 
-        Run, % "https://kissasian.li/?AutodramaIsFinished" ; This will close the main window
+        Run, % "https://" . DRAMA_HOSTNAME . "/?AutodramaIsFinished" ; This will close the main window
 
         if !IsObject(gidList)
             gidList := []
