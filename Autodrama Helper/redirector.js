@@ -51,6 +51,11 @@ function CrawlPage() {
 			let episodeName = $("#selectEpisode option:selected").text().trim();
 			currentEpisode[downloadPage] = dramaName + " " + episodeName;
 		}
+		
+		// First fix attempt to fix the wretched "undefined.autodramatext"
+        if (whatEpisode.matches(/^undefined(\s\(\d+?\))?/)) {
+			window.location.reload();
+		}
 
 		let saveCurrentEpisode = browser.storage.local.set(currentEpisode);
 		saveCurrentEpisode.then(setItem, onError);
