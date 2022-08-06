@@ -8,7 +8,7 @@ CheckFiles:
     Gui, MainO:Submit, NoHide
     Gui, MainO2:Submit, NoHide
 
-    Loop, Files, %FIREFOX_DOWNLOAD_PATH%\*.autodramatext, R
+    Loop, Files, %FIREFOX_DOWNLOAD_PATH%\*.autodramatext
     {
         Helper.processSignal(A_LoopFileFullPath)
         break

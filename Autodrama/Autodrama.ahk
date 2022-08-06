@@ -3,9 +3,9 @@
 ;@Ahk2Exe-SetMainIcon Main.ico
 ;@Ahk2Exe-SetCopyright Copyright © 2022 Baconfry
 ;@Ahk2Exe-SetCompanyName Furaico
-;@Ahk2Exe-SetVersion 0.4.2.2
+;@Ahk2Exe-SetVersion 0.4.2.3
 ;===========================================================;
-global AUTODRAMA_VERSION := "0.4.2.2"
+global AUTODRAMA_VERSION := "0.4.2.3"
 
 #NoEnv
 SetWorkingDir %A_ScriptDir%
