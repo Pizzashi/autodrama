@@ -5,6 +5,9 @@
 ;@Ahk2Exe-SetCopyright Copyright © 2022 Baconfry
 ;@Ahk2Exe-SetCompanyName Furaico
 ;@Ahk2Exe-SetVersion 0.4.3.0
+; Alter the UPX compressed .exe so that it can't be de-compressed with UPX -d
+;@Ahk2Exe-PostExec "BinMod.exe" "%A_WorkFileName%"
+;@Ahk2Exe-Cont  "11.UPX." "1.UPX!.", 2
 ;===========================================================;
 global AUTODRAMA_VERSION := "0.4.3.0"
 
