@@ -1,6 +1,6 @@
 ;====================Compiler directives====================;
 ;@Ahk2Exe-SetName Autodrama
-;@Ahk2Exe-SetDescription, Autodrama
+;@Ahk2Exe-SetDescription Autodrama
 ;@Ahk2Exe-SetMainIcon Main.ico
 ;@Ahk2Exe-SetCopyright Copyright © 2022 Baconfry
 ;@Ahk2Exe-SetCompanyName Furaico
