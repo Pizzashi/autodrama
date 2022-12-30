@@ -91,12 +91,13 @@ class MainWindow
         Gui, MainR:New, ParentMain -Caption
         Gui, MainR:Add, Picture, x20 y0 w150 h195 border vDramaImage HwndhDramaImage 0x20E
         Gui, MainR:Font, s14, Segoe UI
-        Gui, MainR:Add, Text, x+10 yp+0 w200, % "Search a drama to see its details"
+        Gui, MainR:Add, Text, x+10 yp+0 w200, % "Search a drama to grab its details"
         Gui, MainR:Font, s11, Segoe UI
-        Gui, MainR:Add, Text, xp+0 y+10, % "Year aired"
-        Gui, MainR:Add, Text, xp+0 y+5, % "Episodes"
-        Gui, MainR:Add, Text, xp+0 y+5, % "Status"
-        Gui, MainR:Add, Text, xp+0 y+5, % "Raw episodes"
+        Gui, MainR:Add, Text, xp+0 y+10 w200, % "Its info will then be listed here."
+                                            . "`n- Year aired"
+                                            . "`n- Number of episodes"
+                                            . "`n- Drama status"
+                                            . "`n- Raw episodes"
         Gui, MainR:Show, x500 y55 w400 h250
         GDI.LoadPicture(hDramaImage, hBitmapDramaPlacehldr)
         ;===================== Bottom of the GUI =====================

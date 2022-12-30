@@ -1,3 +1,4 @@
+; By Coco: https://github.com/cocobelgica/AutoHotkey-JSON/blob/master/Jxon.ahk
 Jxon_Load(ByRef src, args*)
 {
 	static q := Chr(34)

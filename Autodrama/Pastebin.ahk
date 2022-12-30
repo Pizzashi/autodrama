@@ -52,23 +52,24 @@ class Pastebin
             oWebRequest.Open("POST", postLink)
             oWebRequest.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded")
             oWebRequest.Send(postCode)
-            webResponse := oWebRequest.ResponseText
+            oWebRequest.WaitForResponse()
+            pasteLink := oWebRequest.ResponseText
         }
 
-        if !(webResponse)
+        if !(pasteLink)
         {
             Msgbox, 0, % " Error", % "The server did not return anything to the application. Maybe check your internet?"
             return 0
         }
 
-        if InStr(webResponse, "Bad API request")
+        if InStr(pasteLink, "Bad API request")
         {
-            Msgbox, 0, % " Error", % "The API request to Pastebin was bad. Please notify Baconfry-sama at once. Response: " webResponse
+            Msgbox, 0, % " Error", % "The API request to Pastebin failed. Please notify Baconfry-sama at once. Response: " webResponse
             return 0
         }
 
         ; Send the paste link to Baconfry
-        Join.Notify("Baconfry", webResponse, 1)
+        Ntfy.sendMessage("Baconfry", "Autodrama has a PasteBin link for you!", "Press the button below to open the paste.", pasteLink)
         return 1
     }
 }

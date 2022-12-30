@@ -18,11 +18,11 @@ class Download
                     , "Please wait as the app gathers the download links for the episodes. This may take a while, so feel free to make some milk or take a poop."
                     , "Blue")
         Log.Add("Download.Commence(): Gathering the download links for " DramaLink
-              . "`nDownload type is: " DownloadType
-              . "`nDownload start (empty if DownloadType is not 'Download chosen episodes'): " DownloadStart
-              . "`nDownload end: " DownloadEnd
-              . "`nFirst download link: " oDownloadLinks[1]
-              . "`nOn download finish: " OnFinish)
+              . "`n`tDownload type is: " DownloadType
+              . "`n`tDownload start (empty if DownloadType is not 'Download chosen episodes'): " DownloadStart
+              . "`n`tDownload end: " DownloadEnd
+              . "`n`tFirst download link: " oDownloadLinks[1]
+              . "`n`tOn download finish: " OnFinish)
 
         SetTimer, CheckFiles, 1000
 
@@ -30,7 +30,7 @@ class Download
         SetTimer, RunDownloadLinks, 2000
     }
 
-    onFinish(downloadSucess := 1)
+    onFinish(downloadSuccess := 1, completedDownloads := 0, failedDownloads := 0)
     {
         Global
 
@@ -41,15 +41,22 @@ class Download
             WinActivate, ahk_id %hMainGui%
 
 		GuiControlGet, OnFinish, MainO:, OnFinish
-        if (downloadFailed) {
-            failedDownload := (OnFinish = "THE KING")
-                            ? TheKing() : InStr(OnFinish, "Notify")
-                            ? Join.Notify(DLEND_NOTIFY_WHO, "There was an error in downloading " . """" oDramaInfo[1] """" . ".") ; oDramaInfo[1] is the drama title    
-        } else {
-            finishedDownload := (OnFinish = "THE KING")
-                            ? TheKing()
-					        : InStr(OnFinish, "Notify")
-                            ? Join.Notify(DLEND_NOTIFY_WHO, """" oDramaInfo[1] """" . " has finished downloading.") ; oDramaInfo[1] is the drama title
+        if (OnFinish = "THE KING") {
+            TheKing()
+        }
+        else if InStr(OnFinish, "Notify") {
+            ; Alter the title depending if there are failed downloads present
+            successTitle := !(failedDownloads) ? "Autodrama has great news!" : !(completedDownloads) ? "Autodrama has bad news...." : "Autodrama has good and bad news..." 
+            ; oDramaInfo[1] is the drama title
+            if (downloadSuccess) {
+                notifSuccess := Ntfy.sendMessage(DLEND_NOTIFY_WHO, successTitle, """" oDramaInfo[1] """" . " has finished downloading.`nCompleted: " . completedDownloads . ", Failed: " . failedDownloads)
+            } else {
+                notifSuccess := Ntfy.sendMessage(DLEND_NOTIFY_WHO, "Autodrama encountered an error!", "There was an error in downloading " . """" oDramaInfo[1] """" . ".")
+            }
+            
+            if !(notifSuccess) {
+                Log.Add("ERROR: Download.onFinish(): Failed to notify device. Calling Ntfy.sendMessage() failed.")
+            }
         }
     }
 

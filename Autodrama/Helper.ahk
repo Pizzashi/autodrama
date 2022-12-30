@@ -24,6 +24,8 @@ class Helper
     {
         Global
         
+        local episodePos := 0, helperSignal, episodeName, fileName, downloadLink
+
         SetTimer, CheckFiles, Off
         FileRead, helperSignal, % filePath
         FileDelete, % filePath
@@ -70,12 +72,23 @@ class Helper
         {
             if (DownloadType = "Download all episodes") {    
                 RegExMatch(episodeName, posRegex, episodePos)
-                oAriaDownloadLinks.InsertAt(episodePos, {fileName: fileName, downloadLink: downloadLink})
+                
+                ; If RegexMatch fails, push to the end of the array instead
+                if !(episodePos)
+                    oAriaDownloadLinks.Push({fileName: fileName, downloadLink: downloadLink})
+                else
+                    oAriaDownloadLinks.InsertAt(episodePos, {fileName: fileName, downloadLink: downloadLink})
             }
             if (DownloadType = "Download chosen episodes") {
                 RegExMatch(episodeName, posRegex, episodePos)
-                episodePos :=  (episodePos - DownloadStart + 1)
-                oAriaDownloadLinks.InsertAt(episodePos, {fileName: fileName, downloadLink: downloadLink})
+
+                ; If RegexMatch fails, push to the end of the array instead
+                if !(episodePos)
+                    oAriaDownloadLinks.Push({fileName: fileName, downloadLink: downloadLink})
+                else {
+                    episodePos :=  (episodePos - DownloadStart + 1)
+                    oAriaDownloadLinks.InsertAt(episodePos, {fileName: fileName, downloadLink: downloadLink})
+                }
             }
         }
 

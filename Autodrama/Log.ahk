@@ -4,6 +4,14 @@ class Log
 	{
 		FileDelete, %LOG_FILEDIR%.old
 
+		; Delete log files from last month
+		Loop, Files, *.*
+		{
+			if (A_LoopFileExt = "log" || A_LoopFileExt = "old")
+				if !InStr(A_LoopFileName, A_MMM)
+					FileDelete, % A_LoopFileLongPath
+		}
+
 		if FileExist(LOG_FILEDIR)
 			FileMove, %LOG_FILEDIR%, %LOG_FILEDIR%.old
 

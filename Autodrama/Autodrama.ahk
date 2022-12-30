@@ -1,11 +1,12 @@
 ;====================Compiler directives====================;
 ;@Ahk2Exe-SetName Autodrama
+;@Ahk2Exe-SetDescription, Autodrama
 ;@Ahk2Exe-SetMainIcon Main.ico
 ;@Ahk2Exe-SetCopyright Copyright © 2022 Baconfry
 ;@Ahk2Exe-SetCompanyName Furaico
-;@Ahk2Exe-SetVersion 0.4.2.3
+;@Ahk2Exe-SetVersion 0.4.3.0
 ;===========================================================;
-global AUTODRAMA_VERSION := "0.4.2.3"
+global AUTODRAMA_VERSION := "0.4.3.0"
 
 #NoEnv
 SetWorkingDir %A_ScriptDir%
@@ -19,7 +20,7 @@ ListLines Off
 
 #Include aria2\aria2.ahk
 #Include aria2\httpPost.ahk
-#Include aria2\Jxon.ahk
+#Include Lib\Jxon.ahk
 #Include Cleanup.ahk
 #Include Config.ahk
 #Include Download.ahk
@@ -30,7 +31,7 @@ ListLines Off
 #Include GetDownloadFolders.ahk
 #Include Helper.ahk
 #Include Log.ahk
-#Include Join.ahk
+#Include Ntfy.ahk
 #Include MainWindow.ahk
 #Include Pastebin.ahk
 #Include PlaySound.ahk

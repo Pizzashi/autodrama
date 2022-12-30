@@ -2,7 +2,7 @@
 
 class Drama
 {
-    ; Return value is an array that is: [dramaTitle, dramaAirDate, dramaStatus, totalEpisodes, oRawEpisodes[], urlDramaImage, oDownloadLinks]
+    ; Return value is an array that is: [dramaTitle, dramaAirDate, dramaStatus, totalEpisodes, rawEpsFound?, urlDramaImage, oDownloadLinks]
     getPageInfo(url)
     {
         Log.Add("Drama.getPageInfo(): Getting the drama info for: " . url)
@@ -18,6 +18,7 @@ class Drama
         ;==================================================
         ; Local variables
         oRawEpisodes      := []
+        , rawEpsFound     := 0
         , oDramaInfo      := []
         , oDownloadLinks  := []
         
@@ -70,21 +71,26 @@ class Drama
         ; Assigns the total number of raw episodes to rawEpisodes
         ; and also assigns the list of raw episodes in the array oRawEpisodes[]
         rawEpisodes := 0
-        while( RegExMatch(webPage, rgxEpisodeRaw, oFoundRawEpisode) )
+        if RegExMatch(webPage, rgxEpisodeRaw)
         {
-            oRawEpisodes.Push(oFoundRawEpisode.Value(1))
-            webPage := StrReplace(webpage, oFoundRawEpisode.Value(0)) ; Deletes the found string from the drama page
-            rawEpisodes++
-        }
-        totalEpisodes := rawEpisodes + subbedEpisodes
+            rawEpsFound := 1
 
+            while( RegExMatch(webPage, rgxEpisodeRaw, oFoundRawEpisode) )
+            {
+                oRawEpisodes.Push(oFoundRawEpisode.Value(1))
+                webPage := StrReplace(webpage, oFoundRawEpisode.Value(0)) ; Deletes the found string from the drama page
+                rawEpisodes++
+            }
+        }
+        
+        totalEpisodes := rawEpisodes + subbedEpisodes
         if (networkError) {
             Log.Add("ERROR: Drama.getPageInfo() could not retrieve variable webPage due to a network-related error.")
             return "networkError"
         }
 
-        ; return value array is [dramaTitle, dramaAirDate, dramaStatus, totalEpisodes, oRawEpisodes[], urlDramaImage, oDownloadLinks]
-        oDramaInfo := [dramaTitle, dramaAirDate, dramaStatus, totalEpisodes, oRawEpisodes, urlDramaImage, oDownloadLinks]
+        ; return value array is [dramaTitle, dramaAirDate, dramaStatus, totalEpisodes, rawEpsFound?, urlDramaImage, oDownloadLinks]
+        oDramaInfo := [dramaTitle, dramaAirDate, dramaStatus, totalEpisodes, rawEpsFound, urlDramaImage, oDownloadLinks]
         return oDramaInfo
     }
     
@@ -96,7 +102,7 @@ class Drama
         , airDate := oDramaInfo[2]
         , dramaStatus := oDramaInfo[3]
         , totalEpisodes := oDramaInfo[4]
-        , oRawEpisodes := oDramaInfo[5]
+        , rawEpisodesFound := oDramaInfo[5]
         , urlDramaImage := oDramaInfo[6]
         
         FileDelete, DownloadedImages\kdrama_banner.jpg
@@ -106,14 +112,6 @@ class Drama
         } catch {
             Log.Add("ERROR: Drama.buildDramaInfoGUI() could not download the drama's banner for some reason.")
             downloadError := 1
-        }
-        
-        if (oRawEpisodes.Length()) {
-            Loop % oRawEpisodes.Length()
-            rawEpisodes := "Raw episodes:`n"
-            rawEpisodes .= oRawEpisodes[A_Index] . "`n"
-        } else {
-            rawEpisodes := "All episodes are subbed."
         }
 
         Gui, MainK:New, ParentMain -Caption
@@ -127,7 +125,13 @@ class Drama
         Gui, MainK:Add, Text, x+0 yp+0, % totalEpisodes
         Gui, MainK:Add, Text, x180 y+5 c287882, % "Status: "
         Gui, MainK:Add, Text, x+0 yp+0, % dramaStatus
-        Gui, MainK:Add, Text, x180 y+10 w210, % rawEpisodes
+        
+        ; Highlight if there are raw episodes
+        if (rawEpisodesFound) {
+            Gui, MainK:Add, Text, x180 y+10 w200 cRed, % "CAUTION: There are raw episodes."
+        } else {
+            Gui, MainK:Add, Text, x180 y+10 w200, % "All episodes are subbed."
+        }
 
         Gui, MainR:Destroy
         Gui, MainK:Show, x500 y55 w400 h250

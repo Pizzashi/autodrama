@@ -43,7 +43,7 @@ UpdateStatus:
 		Log.Add("UpdateStatus: Successfully downloaded " COMPLETED_DOWNLOADS " file(s). There were " FAILED_DOWNLOADS " failed download(s).")
 		
 		SetTimer, UpdateStatus, Off
-		Download.onFinish()	
+		Download.onFinish(1, COMPLETED_DOWNLOADS, FAILED_DOWNLOADS)	
 		
 		return
 	}

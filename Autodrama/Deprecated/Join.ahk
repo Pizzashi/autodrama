@@ -24,7 +24,7 @@ class Join
     Notify(deviceName, pushMessage, urlType := 0)
     {
         ; Refer to https://joinjoaomgcd.appspot.com to view the device Ids
-        devicePairs         := {"Daisy": "aa2c0e33a64446d99d2e857ba7983b4c", "Baconfry": "221904fe00b244d0987a684e92856f21"}
+        devicePairs         := {"Daisy": "0", "Baconfry": "0"}
         receivingDevice     := devicePairs[deviceName]
         notifSmallIcon      := "https://i.ibb.co/Ph8mV21/helper-48.png"
         notifTitle          := "Autodrama"
