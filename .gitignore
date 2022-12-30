@@ -3,5 +3,5 @@ Autodrama/DownloadedImages
 *.old
 Autodrama/__Final Release/
 Autodrama/configuration.ini
-Autodrama/Authkey.lic
+Autodrama/*.lic
 Autodrama Helper/Autodrama Helper.zip
