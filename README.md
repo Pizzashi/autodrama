@@ -1,4 +1,7 @@
 # Autodrama
+[![TestedOn](https://img.shields.io/badge/Tested_on-Windows_10_and_11-brightgreen.svg?logo=Windows)](https://github.com/Baconfry/autodrama/releases)
+[![made-with-AHK](https://img.shields.io/badge/Made%20with-AHK%20v1.1.33.09-blue)](http://autohotkey.com)
+
 Finally, an automatic KissAsian downloader.
 
 ## Prerequisites
@@ -16,13 +19,16 @@ Finally, an automatic KissAsian downloader.
 ## How to build
 ### For Autodrama
 - There are three files needed: `Autodrama.exe`, `resources.dll`, and `aria2c.exe`. The application is completely portable; nothing is written in the Registry. Copy the three files in one directory, and you're good to go.
-  - To build `Autodrama.exe`, simply compile `Autodrama.ahk` using AutoHotKey (the released versions are using AutoHotKey version 1.1.33.09).
+  - To build `Autodrama.exe`, simply compile `Autodrama.ahk` using AutoHotKey (the released versions are using AutoHotKey version 1.1.33.09). [BinMod.ahk](https://github.com/AutoHotkey/Ahk2Exe/blob/master/BinMod.ahk) is now required for compiling since the app handles sensitive data. Download the script and install it according to the instructions.
   - To compile `resources.dll`, go to `Autodrama\Resources`, then just run `packer.ahk`. A `resources.dll` file will then be generated in the same directory.
   - For aria2c, download the latest version from this [repository](https://github.com/aria2/aria2). Or you can use the compiled binary at `Autodrama\External Requirements`.
 ### For Autodrama Helper
 - Download the Mozilla addon from [here](https://addons.mozilla.org/en-US/developers/). Simple drag the `.xpi` file into the Mozilla Firefox window.
 - If you want to compile the add-on yourself, compile all the files in `AutodramaHelper` into a `.zip` file, then go to [debugging](about:debugging#/runtime/this-firefox), and then click "Load Temporary Add-on..."
   - Alternatively, you can "load" the temporary addon by loading any file of the addon source, such as `manifest.json`.
+
+## Special Thanks
+This app uses the free and open-source [ntfy](https://ntfy.sh/). HUGE thanks to the awesome author, binwiederhier.
 
 ## Dedication
 I dedicate this application to my loving mother who has worked hard all her life for my sister and I. Despite being a single mom, she's providing us with all our needs and most of our wants. You deserve all the dramas in the world, mom.
