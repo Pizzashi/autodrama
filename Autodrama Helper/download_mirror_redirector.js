@@ -26,7 +26,7 @@ function CrawlPage() {
 		window.location.reload();
 	}
 
-	// Kissasian is using the beta server and not the FE server
+	// Kissasian is using the beta server and not the default download (e.g. FE) server
 	if (window.location.href.includes("&s=beta")) {
 		SaveToDisk("eFeNotAvail", "err.autodramatext");
 		// Only works if dom.allow_scripts_to_close_windows is set to true

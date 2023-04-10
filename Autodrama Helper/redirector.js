@@ -41,9 +41,13 @@ function CrawlPage() {
 		 *	clearStorage.then(onCleared, onError);
 		 */
 
+		// Grabs the URL of the "CLICK TO DOWNLOAD" link
+		// This is the downloadPage of the mirror
 		let downloadPage = oDownloadPage.attr('href');
 		let currentEpisode = {}
 
+		// To retrieve the movie title or show episode, use the url...
+		// see the examples
 		if (movieDramaType) {
 			currentEpisode[downloadPage] = dramaName + " Movie";	
 		}

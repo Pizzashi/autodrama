@@ -1,13 +1,13 @@
 {
   "manifest_version": 2,
   "name": "Autodrama Helper",
-  "version": "0.4.3.0",
+  "version": "0.4.3.1",
   "description": "Helper for Autodrama. Crawls through the sites and grabs the download links.",
   "developer": {
-    "name": "Baconfry",
-    "url": "https://github.com/Baconfry"
+    "name": "Pizzashi",
+    "url": "https://github.com/Pizzashi"
   },
-  "homepage_url": "https://github.com/Baconfry/autodrama",
+  "homepage_url": "https://github.com/Pizzashi/autodrama",
   "icons": {
     "48": "icons/helper-48.png"
   },
@@ -21,12 +21,22 @@
     {
       "matches": ["*://kissasian.li/Drama/*?id=*"],
       "run_at": "document_idle",
-      "js": ["fe_redirector.js", "on_error.js"]
+      "js": ["download_mirror_redirector.js", "on_error.js"]
     },
     {
       "matches": ["*://www.gaobook.review/*"],
       "run_at": "document_idle",
-      "js": ["lib/jquery.js", "lib/savetodisk.js", "download_link_catcher.js", "on_error.js"]
+      "js": ["lib/jquery.js", "lib/savetodisk.js", "fe_downloader.js", "on_error.js"]
+    },
+    {
+      "matches": ["*://wnews247.net/d/*"],
+      "run_at": "document_idle",
+      "js": ["lib/jquery.js", "lib/savetodisk.js", "sb_redirector.js", "on_error.js"]
+    },
+    {
+      "matches": ["*://wnews247.net/*"],
+      "run_at": "document_idle",
+      "js": ["lib/jquery.js", "lib/savetodisk.js", "sb_downloader.js", "on_error.js"]
     },
     {
       "matches": ["*://kissasian.li/Special/*"],
