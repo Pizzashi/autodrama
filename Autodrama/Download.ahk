@@ -75,6 +75,7 @@ class Download
         local SCRT_TOKEN := "xRyEkIylIPAxgw9Yo6NNnpvajNvAHRZPqvS1lwgrOXX9K6pNlSdBQt4w4y73pYfL"
             , global_options := "max-concurrent-downloads=" MAX_CONCURRENT_DWNL     . "`r`n"
                               . "max-overall-download-limit=" DWNLD_SPEED_LIM "K"   . "`r`n"
+                              . "max-connection-per-server=16"                      . "`r`n" ; Hard-coded for now
                               . CUSTOM_ARIA_OPTIONS
         ;, global_options := "max-concurrent-downloads=2"
             , oGlobalOptions := this.Options2obj(global_options)
