@@ -11,7 +11,7 @@
 ;@Ahk2Exe-PostExec "BinMod.exe" "%A_WorkFileName%"
 ;@Ahk2Exe-Cont  "11.UPX." "1.UPX!.", 2
 ;===========================================================;
-global AUTODRAMA_VERSION := "0.4.3.1"
+global AUTODRAMA_VERSION := "0.4.3.2"
 
 #NoEnv
 SetWorkingDir %A_ScriptDir%

@@ -49,13 +49,9 @@ class Download
             successTitle := !(failedDownloads) ? "Autodrama has great news!" : !(completedDownloads) ? "Autodrama has bad news...." : "Autodrama has good and bad news..." 
             ; oDramaInfo[1] is the drama title
             if (downloadSuccess) {
-                notifSuccess := Ntfy.sendMessage(DLEND_NOTIFY_WHO, successTitle, """" oDramaInfo[1] """" . " has finished downloading.`nCompleted: " . completedDownloads . ", Failed: " . failedDownloads)
+               Ntfy.sendMessage(DLEND_NOTIFY_WHO, successTitle, """" oDramaInfo[1] """" . " has finished downloading.`nCompleted: " . completedDownloads . ", Failed: " . failedDownloads)
             } else {
-                notifSuccess := Ntfy.sendMessage(DLEND_NOTIFY_WHO, "Autodrama encountered an error!", "There was an error in downloading " . """" oDramaInfo[1] """" . ".")
-            }
-            
-            if !(notifSuccess) {
-                Log.Add("ERROR: Download.onFinish(): Failed to notify device. Calling Ntfy.sendMessage() failed.")
+                Ntfy.sendMessage(DLEND_NOTIFY_WHO, "Autodrama encountered an error!", "There was an error in downloading " . """" oDramaInfo[1] """" . ".")
             }
         }
     }

@@ -16,7 +16,7 @@ class Helper
          * The hostname is stored in the global variable DRAMA_HOSTNAME
          */
         Run, % homePage
-        SetTimer, CheckFiles, 1000
+        SetTimer, CheckFiles, 1500
     }
 
     ; If you add a return statement here, CheckFiles won't be turned on again.
@@ -119,5 +119,6 @@ class Helper
                     , "Red"
                     , 1)
         Log.Add("ERROR: Helper.processSignal(): One of the download links has no valid download link, terminating.")
+        Ntfy.sendMessage(DLEND_NOTIFY_WHO, "Autodrama has bad news....", "One of the episodes has no valid download link. Download has been terminated.")
     }
 }
