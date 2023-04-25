@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Autodrama Helper",
-  "version": "0.4.3.1",
+  "version": "0.4.3.2",
   "description": "Helper for Autodrama. Crawls through the sites and grabs the download links.",
   "developer": {
     "name": "Pizzashi",
@@ -15,7 +15,7 @@
   "content_scripts": [
     {
       "matches": ["*://kissasian.li/*"],
-      "run_at": "document_end",
+      "run_at": "document_idle",
       "js": ["lib/jquery.js", "lib/savetodisk.js", "onfinish.js", "login.js"]
     },
     {

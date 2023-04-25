@@ -1,5 +1,11 @@
 // We infer that there is captcha if the "YOUR DOWNLOAD LINK" message is not shown
+// In addition, there is an error landing page that disappears upon reload.
 function CheckPageState() {
+    pageError = $("h1:contains('503 Service Temporarily Unavailable')").length;
+    if (pageError) {
+		location.reload()
+	}
+
     captchaDone = $("h3:contains('YOUR DOWNLOAD LINK')").length;
     if (captchaDone == 0) {
         DealWithCaptcha()
