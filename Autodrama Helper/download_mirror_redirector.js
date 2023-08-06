@@ -71,10 +71,10 @@ function CrawlPage() {
 	}
 }
 
-// If the page is not responsive for 5 seconds, this portion will reload the page
+// If the page is not responsive for 10 seconds, this portion will reload the page
 setTimeout(function() {
 	location.reload();
-}, 5000)
+}, 10000)
 
 // Crawl for information 1 second after the page is ready (to ensure full readiness of the webpage)
 jQuery(document).ready(setTimeout(CrawlPage, 1000));
