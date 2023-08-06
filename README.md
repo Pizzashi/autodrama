@@ -8,7 +8,7 @@ Finally, an automatic KissAsian downloader.
 - For now, only Mozilla Firefox is supported.
 - The **Default Browser** must be Mozilla Firefox (for now).
 - You need to set `dom.allow_scripts_to_close_windows = true` in `about:config`.
-- Under KissAsian [settings](https://kissasian.li/Profile) (account is required), the `Default server` must be set to `FE`. `Default quality` can be ignored, as the app always prioritizes 360p, then 480p, then 720p, and then 1080p.
+- Under KissAsian [settings](https://kissasian.li/Profile) (account is required), the `Default server` must be set to **FE**, **SB**, or **SW** . `Default quality` can be ignored, as the app always prioritizes 360p, then 480p, then 720p, and then 1080p.
 
 ## Versions to pair
 - Autodrama will work with the helper if their versions are both `x.x.x` (e.g. 1.0.5). The fourth digit is not important. For example, Autodrama `v0.5.0.1` will work with Autodrama Helper `v0.5.0.4`.
@@ -20,6 +20,7 @@ Finally, an automatic KissAsian downloader.
 ### For Autodrama
 - There are three files needed: `Autodrama.exe`, `resources.dll`, and `aria2c.exe`. The application is completely portable; nothing is written in the Registry. Copy the three files in one directory, and you're good to go.
   - To build `Autodrama.exe`, simply compile `Autodrama.ahk` using AutoHotKey (the released versions are using AutoHotKey version 1.1.33.09). [BinMod.ahk](https://github.com/AutoHotkey/Ahk2Exe/blob/master/BinMod.ahk) is now required for compiling since the app handles sensitive data. Download the script and install it according to the instructions.
+  - `Autodrama.exe` requires you to create a file named `TopicKeys.lic` that contains the ntfy topics. That is, it should contain `static daisyTopic := "topickey1" ` and ` static baconfryTopic := "topickey2"`.
   - To compile `resources.dll`, go to `Autodrama\Resources`, then just run `packer.ahk`. A `resources.dll` file will then be generated in the same directory.
   - For aria2c, download the latest version from this [repository](https://github.com/aria2/aria2). Or you can use the compiled binary at `Autodrama\External Requirements`.
 ### For Autodrama Helper
