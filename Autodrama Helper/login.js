@@ -67,9 +67,12 @@ function CredentialsReady(mode)
 
 function ReadyCheck()
 {
-	let LAUNCHED_BY_AUTODRAMA = (window.location.href.match(/kissasian.mx\/\?LaunchedByAutodrama/) || window.location.href.match(/kissasian.mx\/Login\?LaunchedByAutodrama/))
+	let basePath = window.location.protocol + "//" + window.location.hostname
+	// Make sure to quote all literal ? with \\? (https://stackoverflow.com/a/32376171)
+	let LAUNCHED_BY_AUTODRAMA = (window.location.href.match(basePath + "/\\?LaunchedByAutodrama\\?AnotherInstance")
+								|| window.location.href.match(basePath + "/Login\\?LaunchedByAutodrama"))
 	let BROWSER_CHECK = $("h1:contains('Checking your browser before accessing')").length || $("h2:contains('Checking if the site connection is secure')").length;
-	
+
 	// Check if Cloudflare is still checking
 	// If it is, check again after two seconds
 	if (BROWSER_CHECK) {

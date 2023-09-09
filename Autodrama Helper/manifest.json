@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Autodrama Helper",
-  "version": "0.4.3.4",
+  "version": "0.4.3.5",
   "description": "Helper for Autodrama. Crawls through the sites and grabs the download links.",
   "developer": {
     "name": "Pizzashi",
@@ -24,6 +24,26 @@
       "js": ["download_mirror_redirector.js", "on_error.js"]
     },
     {
+      "matches": ["*://kissasian.mx/Special/*"],
+      "run_at": "document_idle",
+      "js": ["captcha_detect.js"]
+    },
+    {
+      "matches": ["*://kissasian.li/*"],
+      "run_at": "document_idle",
+      "js": ["lib/jquery.js", "lib/savetodisk.js", "onfinish.js", "login.js"]
+    },
+    {
+      "matches": ["*://kissasian.li/Drama/*?id=*"],
+      "run_at": "document_idle",
+      "js": ["download_mirror_redirector.js", "on_error.js"]
+    },
+    {
+      "matches": ["*://kissasian.li/Special/*"],
+      "run_at": "document_idle",
+      "js": ["captcha_detect.js"]
+    },
+    {
       "matches": ["*://www.gaobook.review/*"],
       "run_at": "document_idle",
       "js": ["lib/jquery.js", "lib/savetodisk.js", "fe_downloader.js", "on_error.js"]
@@ -42,11 +62,6 @@
       "matches": ["*://kswplayer.info/f/*"],
       "run_at": "document_idle",
       "js": ["lib/jquery.js", "lib/savetodisk.js", "sw_downloader.js", "on_error.js"]
-    },
-    {
-      "matches": ["*://kissasian.mx/Special/*"],
-      "run_at": "document_idle",
-      "js": ["captcha_detect.js"]
     }
   ]
 }
