@@ -11,8 +11,8 @@ class Helper
         homePage := "https://" . DRAMA_HOSTNAME . "/?LaunchedByAutodrama?AnotherInstance"
         /**
          * To prevent mishaps, the helper will check only these links to check for logins:
-         * "https://DRAMA_HOSTNAME/?LaunchedByAutodrama"
-         * "https://DRAMA_HOSTNAME/Login?LaunchedByAutodrama"
+         * "https://DRAMA_HOSTNAME/?LaunchedByAutodrama?AnotherInstance"
+         * "https://DRAMA_HOSTNAME/Login?LaunchedByAutodrama
          * The hostname is stored in the global variable DRAMA_HOSTNAME
          */
         Run, % homePage
