@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Autodrama Helper",
-  "version": "0.4.3.6",
+  "version": "0.4.3.7",
   "description": "Helper for Autodrama. Crawls through the sites and grabs the download links.",
   "developer": {
     "name": "Pizzashi",
@@ -28,6 +28,7 @@
       "run_at": "document_idle",
       "js": ["captcha_detect.js"]
     },
+
     {
       "matches": ["*://kissasian.li/*"],
       "run_at": "document_idle",
@@ -43,6 +44,7 @@
       "run_at": "document_idle",
       "js": ["captcha_detect.js"]
     },
+
     {
       "matches": ["*://kissasian.sh/*"],
       "run_at": "document_idle",
@@ -58,6 +60,23 @@
       "run_at": "document_idle",
       "js": ["captcha_detect.js"]
     },
+
+    {
+      "matches": ["*://kissasian.lu/*"],
+      "run_at": "document_idle",
+      "js": ["lib/jquery.js", "lib/savetodisk.js", "onfinish.js", "login.js"]
+    },
+    {
+      "matches": ["*://kissasian.lu/Drama/*?id=*"],
+      "run_at": "document_idle",
+      "js": ["download_mirror_redirector.js", "on_error.js"]
+    },
+    {
+      "matches": ["*://kissasian.lu/Special/*"],
+      "run_at": "document_idle",
+      "js": ["captcha_detect.js"]
+    },
+
     {
       "matches": ["*://www.gaobook.review/*"],
       "run_at": "document_idle",
