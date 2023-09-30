@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Autodrama Helper",
-  "version": "0.4.3.5",
+  "version": "0.4.3.6",
   "description": "Helper for Autodrama. Crawls through the sites and grabs the download links.",
   "developer": {
     "name": "Pizzashi",
@@ -40,6 +40,21 @@
     },
     {
       "matches": ["*://kissasian.li/Special/*"],
+      "run_at": "document_idle",
+      "js": ["captcha_detect.js"]
+    },
+    {
+      "matches": ["*://kissasian.sh/*"],
+      "run_at": "document_idle",
+      "js": ["lib/jquery.js", "lib/savetodisk.js", "onfinish.js", "login.js"]
+    },
+    {
+      "matches": ["*://kissasian.sh/Drama/*?id=*"],
+      "run_at": "document_idle",
+      "js": ["download_mirror_redirector.js", "on_error.js"]
+    },
+    {
+      "matches": ["*://kissasian.sh/Special/*"],
       "run_at": "document_idle",
       "js": ["captcha_detect.js"]
     },
