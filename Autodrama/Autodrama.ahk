@@ -60,7 +60,7 @@ global AUTODRAMA_PID          := ErrorLevel                      ; The script's 
                               ? movieDwnlPath : USER_DOWNLOAD_PATH . "\Video\"
      , MAX_CONCURRENT_DWNL    := (maxConcDwnl := Config.Read("AppData", "MaxDownloads")) 
                               ? maxConcDwnl : 2
-     , CUSTOM_ARIA_OPTIONS    := Config.Read("AppData", "AriaOptions")
+     , CUSTOM_ARIA_OPTIONS    := Trim(StrReplace(Config.Read("AppData", "AriaOptions"), "|", "`r`n"), "`r`n")
      , DLEND_NOTIFY_WHO       := (notifyWho := Config.Read("AppData", "NotificationRecipient"))
                               ? notifyWho : "Daisy"
      , POP_UP_ONFINISH        := (popUpOnFinish := Config.Read("AppData", "PopUpOnFinish"))

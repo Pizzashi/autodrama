@@ -14,17 +14,17 @@ SaveDownloadOptions:
     Gui, AdvSet:Submit, NoHide
     GuiControl, AdvSet:, SaveDlOptionsBtn, % "Saving settings..."
 
-    ; Save options to disk
-    Config.Write("AppData", "SpeedLimit", DlSpdLim)
-    Config.Write("AppData", "MaxDownloads", MaxConcDl)
-    Config.Write("AppData", "AriaOptions", CustDlOptns)
-    Config.Write("AppData", "DownloadPath", DlDir)
-    
     ; Save options to variables
-    CUSTOM_ARIA_OPTIONS     := CustDlOptns
+    CUSTOM_ARIA_OPTIONS     := Trim(StrReplace(CustDlOptns, "`n", "|"), "|")
     , MOVIE_DOWNLOAD_PATH   := DlDir
     , MAX_CONCURRENT_DWNL   := MaxConcDl
     , DWNLD_SPEED_LIM       := DlSpdLim
+
+    ; Save options to disk
+    Config.Write("AppData", "AriaOptions", CUSTOM_ARIA_OPTIONS)
+    Config.Write("AppData", "DownloadPath", MOVIE_DOWNLOAD_PATH)
+    Config.Write("AppData", "MaxDownloads", MAX_CONCURRENT_DWNL)
+    Config.Write("AppData", "SpeedLimit", DWNLD_SPEED_LIM)
 
     ; If this returns anything, it means Aria is active and must be restarted
     if (aria2.getVersion().result.version)

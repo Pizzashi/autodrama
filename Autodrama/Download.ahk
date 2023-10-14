@@ -69,12 +69,13 @@ class Download
             , "Blue")
 
         local SCRT_TOKEN := "xRyEkIylIPAxgw9Yo6NNnpvajNvAHRZPqvS1lwgrOXX9K6pNlSdBQt4w4y73pYfL"
-            , global_options := "max-concurrent-downloads=" MAX_CONCURRENT_DWNL     . "`r`n"
-                              . "max-overall-download-limit=" DWNLD_SPEED_LIM "K"   . "`r`n"
-                              . "max-connection-per-server=16"                      . "`r`n" ; Hard-coded for now
-                              . CUSTOM_ARIA_OPTIONS
-        ;, global_options := "max-concurrent-downloads=2"
-            , oGlobalOptions := this.Options2obj(global_options)
+        , global_options := "max-concurrent-downloads=" MAX_CONCURRENT_DWNL    . "`r`n"
+                            . "max-overall-download-limit=" DWNLD_SPEED_LIM "K"   . "`r`n"
+                            . "max-connection-per-server=16"                      . "`r`n" ; Hard-coded for now
+                            . "split=16"                                          . "`r`n" ; Hard-coded for now
+                            . "min-split-size=5M"                                 . "`r`n" ; Hard-coded for now
+                            . CUSTOM_ARIA_OPTIONS
+        , oGlobalOptions := this.Options2obj(global_options)
 
         try Run, %ComSpec% /c aria2c.exe --enable-rpc --rpc-listen-all --rpc-secret=%SCRT_TOKEN% --stop-with-process=%AUTODRAMA_PID% -c,, Hide UseErrorLevel, pidAria
         catch
@@ -88,7 +89,7 @@ class Download
         }
 
         if (aria2.changeGlobalOption(oGlobalOptions).result != "OK") {
-            Log.Add("ERROR: Download.startAria(): Aria2c global settings could not be set. Global options: " global_options)
+            Log.Add("ERROR: Download.startAria(): Aria2c global settings could not be set. Global options:`n" global_options)
             Remark.Update("Error!"
                         , "Aria2c options could not be modified. Please close the app and try again."
                         , "Red"
