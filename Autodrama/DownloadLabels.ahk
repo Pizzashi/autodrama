@@ -77,9 +77,9 @@ UpdateStatus:
 return
 
 RunDownloadLinks:
-	; Timeout for 30 seconds every 5 episodes to avoid error messages
+	; Timeout for 10 seconds every 5 episodes to avoid error messages
 	if (openEpisodes >= 5) {
-		Sleep, 30000
+		Sleep, 10000
 		openEpisodes := 0
 	}
 
