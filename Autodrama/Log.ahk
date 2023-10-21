@@ -15,7 +15,7 @@ class Log
 		if FileExist(LOG_FILEDIR)
 			FileMove, %LOG_FILEDIR%, %LOG_FILEDIR%.old
 
-		titleText := "Autodrama Log for " A_MMMM " " A_DD ", " A_YYYY "`r`n"
+		titleText := "Autodrama v" AUTODRAMA_VERSION " log for " A_MMMM " " A_DD ", " A_YYYY "`r`n"
 		FileAppend, %titleText%, %LOG_FILEDIR%
 	}
 

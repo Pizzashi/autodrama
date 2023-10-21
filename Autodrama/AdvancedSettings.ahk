@@ -5,7 +5,7 @@ class AdvancedSettings
         Global
 
         Gui, Main:+Disabled
-        Gui, AdvSet:New, +OwnerMain +HwndhAdvSettings, % "Autodrama v" . AUTODRAMA_VERSION . " Settings"
+        Gui, AdvSet:New, +OwnerMain +HwndhAdvSettings, % "Autodrama Settings"
         Gui, AdvSet:Margin, 10, 10 
         Gui, AdvSet:Add, Tab3, x10 y10 w410 h280, Download|Application|Log
         ;===================Download Settings===================;

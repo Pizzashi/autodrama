@@ -61,8 +61,9 @@ return
 CancelDownloads:
     SetTimer, UpdateStatus, Off
 
-    Log.Add("CancelDownloads: Attempting to shutdown aria2c.")
+    Log.Add("CancelDownloads: Attempting to shutdown aria.")
     if (aria2.shutdown().result = "OK") {
+        Log.Add("CancelDownloads: Successfully shut down aria.")
 		Window.resetAll()
         Remark.Update("Successfully cancelled downloads."
                     , "Your downloads have been successfully cancelled. You may try searching another drama again."
