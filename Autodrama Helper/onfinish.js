@@ -37,8 +37,7 @@ function checkFinishedFlag()
 
 	gettingItem.then((res) => {
 		if (res.helperCanClose && window.location.pathname == "/")
-		{	
-			SetFinishedFlag(0);
+		{
 			// window.close() only works if dom.allow_scripts_to_close_windows is set to true
 			window.close();
 		}
@@ -57,8 +56,7 @@ if (window.location.href.match(/\?AnotherInstance/)) {
 	SetFinishedFlag(0);
 	SetErrorFlag(0);
 }
-
-if (window.location.href.match(/\?AutodramaIsFinished/)) {
+else if (window.location.href.match(/\?AutodramaIsFinished/)) {
 	// Clear the local storage when the session ends
 	clearLocalStorage()
 
@@ -66,14 +64,17 @@ if (window.location.href.match(/\?AutodramaIsFinished/)) {
 	// window.close() only works if dom.allow_scripts_to_close_windows is set to true
     window.close();
 }
-
-if (window.location.href.match(/\?AutodramaFatalError/)) {
+else if (window.location.href.match(/\?AutodramaFatalError/)) {
 	// Clear the local storage when there is an error
 	clearLocalStorage()
 
 	SetErrorFlag(1);
 	// window.close() only works if dom.allow_scripts_to_close_windows is set to true
     window.close();
+}
+else if (!window.location.href.match(/\?LaunchedByAutodrama/)) {
+	SetFinishedFlag(0);
+	SetErrorFlag(0);
 }
 
 // Check for helperCanClose flag every 3 seconds
