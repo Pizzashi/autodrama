@@ -59,5 +59,10 @@ function ClickFirstDownloadLink(downloadBtn) {
     }, Math.floor(Math.random() * (2500 - 1000) + 1000)); // Generates a number between 1000 and 2500
 }
 
+// If the page is not responsive for 5 seconds, this portion will reload the page
+setTimeout(function() {
+	location.reload();
+}, 5000)
+
 // Code starts here
 jQuery(document).ready(CheckPageState());

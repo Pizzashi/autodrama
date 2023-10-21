@@ -37,5 +37,10 @@ function SaveDownloadLink() {
     });
 }
 
+// If the page is not responsive for 5 seconds, this portion will reload the page
+setTimeout(function() {
+	location.reload();
+}, 5000)
+
 // Code starts here
 jQuery(document).ready(CheckPageState());
