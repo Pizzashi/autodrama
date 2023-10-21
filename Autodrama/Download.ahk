@@ -68,8 +68,7 @@ class Download
             , "Please wait as the app tries to start the downloader."
             , "Blue")
 
-        local SCRT_TOKEN := "xRyEkIylIPAxgw9Yo6NNnpvajNvAHRZPqvS1lwgrOXX9K6pNlSdBQt4w4y73pYfL"
-        , global_options := "max-concurrent-downloads=" MAX_CONCURRENT_DWNL    . "`r`n"
+        local global_options := "max-concurrent-downloads=" MAX_CONCURRENT_DWNL    . "`r`n"
                             . "max-overall-download-limit=" DWNLD_SPEED_LIM "K"   . "`r`n"
                             . "max-connection-per-server=16"                      . "`r`n" ; Hard-coded for now
                             . "split=16"                                          . "`r`n" ; Hard-coded for now

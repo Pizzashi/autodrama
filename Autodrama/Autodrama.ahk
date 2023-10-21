@@ -33,6 +33,7 @@ ListLines Off
 #Include ErrorHandling.ahk
 #Include ExitFunction.ahk
 #Include FileCheck.ahk
+#Include Generate.ahk
 #Include GetDownloadFolders.ahk
 #Include Helper.ahk
 #Include Log.ahk
@@ -46,6 +47,7 @@ ListLines Off
 
 Process, Exist                                                   ; Retrieve the script's PID
 global AUTODRAMA_PID          := ErrorLevel                      ; The script's PID is stored in ErrorLevel
+     , SCRT_TOKEN             := Generate.randomString(64)       ; For use with Aria
      , FIREFOX_DOWNLOAD_PATH  := GetFirefoxDownloadFolder()
      , USER_DOWNLOAD_PATH     := GetUserDownloadFolder()
      , COMBO_BOX_HISTORY      := ""                              ; Used in ComboBoxHistory.ahk

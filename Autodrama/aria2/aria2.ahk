@@ -8,7 +8,7 @@
 		data := { "jsonrpc": "2.0"
 		        , "id": "1"
 		        , "method": "aria2." method
-		        , "params": ["token:xRyEkIylIPAxgw9Yo6NNnpvajNvAHRZPqvS1lwgrOXX9K6pNlSdBQt4w4y73pYfL" , params*] }
+		        , "params": ["token:" SCRT_TOKEN, params*] }
 		data := Jxon_Dump(data)
 
 		httpPost( this.url, data, "utf-8" )

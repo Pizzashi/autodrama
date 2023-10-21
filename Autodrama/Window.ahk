@@ -3,8 +3,9 @@ class Window
     resetAll()
     {
         Global
-        SetBatchLines, -1
 
+        Cleanup()
+        
         this.enableInput()
         this.hideDownloadOptions()
         this.enableOptions()
@@ -14,10 +15,8 @@ class Window
         ; Clear the "from" and "to" episodes in "Download chosen episodes"
         GuiControl, MainO2:, DownloadStart
         GuiControl, MainO2:, DownloadEnd
-        gidList :=
-        oAriaDownloadLinks :=
-
-        SetBatchLines, 10ms
+        gidList := ""
+        oAriaDownloadLinks := ""
     }
 
     hideDownloadOptions()
