@@ -2,15 +2,21 @@ class Config
 {
     Read(sectionName, key)
     {
-        IniRead, tempRead, configuration.ini, % sectionName, % key, % A_Space
-        return tempRead
+        IniRead, tempRead, configuration.ini, % sectionName, % key, % "Autodrama.Config.Read.ErrorMessage"
+        return (tempRead = "Autodrama.Config.Read.ErrorMessage") ? "" : tempRead
     }
 
     Write(sectionName, key, value)
     {
-        try IniWrite, % value, configuration.ini, % sectionName, % key
-        catch
+        try {
+            IniWrite, % value, configuration.ini, % sectionName, % key
+        }
+        if (ErrorLevel) {
             Log.Add("ERROR: Config.Write(): The app could not write " value " into " sectionName "\" key " in configuration.ini")
+            return ""
+        } else {
+            return value
+        }
     }
 
     Init()
