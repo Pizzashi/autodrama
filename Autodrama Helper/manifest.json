@@ -94,7 +94,7 @@
     },
     {
       "matches": ["*://kswplayer.info/f/*"],
-      "run_at": "document_idle",
+      "run_at": "document_start",
       "js": ["lib/jquery.js", "lib/savetodisk.js", "sw_downloader.js", "on_error.js"]
     }
   ]
