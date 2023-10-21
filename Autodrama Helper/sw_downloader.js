@@ -4,11 +4,17 @@ function CheckPageState() {
     let sdQualityUrl = window.location.href.match(/_n/)
     let hdQualityUrl = window.location.href.match(/_h/)
     let uhdQualityUrl = window.location.href.match(/_x/)
-    let versionNotAvail = $("div:contains('This version is not available for this video')");
+    let versionNotAvail = $("div:contains('This version is not available for this video')").length;
+    let noSuchFile = $("div:contains('No such file!!')").length;
+    let fileNotAvailable = $("div:contains('File not available!')").length;
     let finalDownloadTextPresent = $("h3:contains('YOUR DOWNLOAD LINK')").length;
     let downloadBtn = $("button.g-recaptcha");
 
-    if (sdQualityUrl || hdQualityUrl || uhdQualityUrl) {    
+    if (noSuchFile) {
+        // Throw an error, we don't have a download link for an episode
+        SaveToDisk("downloadNotAvailable", "err.autodramatext", 1);
+    }
+    else if (sdQualityUrl || hdQualityUrl || uhdQualityUrl) {    
         if (finalDownloadTextPresent) {
             ddl = $("a:contains('Download Video')").attr('href');
             landingPage = window.location.href.replace(/_\w$/, ".html")
@@ -23,7 +29,7 @@ function CheckPageState() {
         else if (downloadBtn.length) {
             ClickFirstDownloadLink(downloadBtn)
         }
-        else if (versionNotAvail) {
+        else if (versionNotAvail || fileNotAvailable) {
             // Throw an error, we don't have a download link for an episode
             SaveToDisk("downloadNotAvailable", "err.autodramatext", 1);
         }
