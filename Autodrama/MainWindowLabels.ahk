@@ -144,12 +144,15 @@ SearchDrama:
         Window.enableInput()
         return
     }
-    
+
+    DRAMA_TOTAL_EPISODES := oDramaInfo[4]
+
     ; Everything looks good!
     Remark.Update("Got the drama information!"
                 , "Look at the drama details. If this is the drama that you intend to download, then modify the Options and hit download!"
                 , "Green")
     Log.Add("SearchDrama: Successfully processed drama information and download links.")
+
     ComboBox.updateHistory(DramaLink) ; Record the last link to history
     Window.enableInput()
     Window.enableDownload()
@@ -178,17 +181,15 @@ DownloadDrama:
          * - DownloadStart is greater than DownloadEnd
          * - DownloadStart is empty
          * - DownloadStart is less than 1
-         * - DownloadEnd is greater than the last episode
          */
         if ( (DownloadStart > DownloadEnd)
           || (!DownloadStart)
-          || (DownloadStart < 1)
-          || (DownloadEnd > oDownloadLinks.Length()) ) {
+          || (DownloadStart < 1) ) {
             Remark.Update("There's an error on the chosen download range."
                         , "You useless badet. Recheck your chosen download episodes. Dapat mas gamay ang ""from"" kaysa ""to"". Take note nga dili pwede apilon ang mga raw kay dili kabalo mag Korean si mather you useless egg."
                         , "Red"
                         , 1)
-            Log.Add("ERROR: Badet has screwed up on choosing the download episodes."
+            Log.Add("ERROR: DownloadDrama: Badet has screwed up on choosing the download episodes."
                     . "`nDownloadStart: " DownloadStart
                     . "`nDownloadEnd: " DownloadEnd
                     . "`nMaximum episode: " oDownloadLinks.Length())
@@ -202,14 +203,12 @@ DownloadDrama:
     Window.disableOptions()
 
     ; Modify oDownloadLinks if user chose to download chosen episodes
-    ; Do not append this code to the previous if-statement, this is not checking for invalid input
     if (DownloadType = "Download chosen episodes") {
-        beginLen := (DownloadStart - 1)
-        oDownloadLinks.RemoveAt(1, beginLen)
-
-        endStart := (DownloadEnd - DownloadStart + 2)
-        endLen := (oDownloadLinks.Length() - endStart + 1)
-        oDownloadLinks.RemoveAt(endStart, endLen)
+        Loop % oDownloadLinks.Length() {
+            if (A_Index < DownloadStart || A_Index > DownloadEnd) {
+                oDownloadLinks.Delete(A_Index)
+            }
+        }
     }
 
     global DRAMA_FOLDER := MOVIE_DOWNLOAD_PATH . Download.makeWinFriendly(oDramaInfo[1] . " (" . oDramaInfo[2] . ")")

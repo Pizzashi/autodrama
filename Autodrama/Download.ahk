@@ -5,7 +5,7 @@ class Download
         return RegexReplace(text, "[\/:\*\?""<>\|]")
     }
 
-    Commence()
+    Commence(linksUnfinished := 0)
     {
         Global
 
@@ -17,16 +17,30 @@ class Download
         Remark.Update("Gathering the download links..."
                     , "Please wait as the app gathers the download links for the episodes. This may take a while, so feel free to make some milk or take a poop."
                     , "Blue")
-        Log.Add("Download.Commence(): Gathering the download links for " DramaLink
+        ; Avoid verbose logging when redownloading drama
+        if !(linksUnfinished) {
+            if (DownloadType = "Download chosen episodes") {
+            Log.Add("Download.Commence(): Gathering the download links for " DramaLink
               . "`n`tDownload type is: " DownloadType
-              . "`n`tDownload start (empty if DownloadType is not 'Download chosen episodes'): " DownloadStart
+              . "`n`tDownload start: " DownloadStart
               . "`n`tDownload end: " DownloadEnd
-              . "`n`tFirst download link: " oDownloadLinks[1]
               . "`n`tOn download finish: " OnFinish)
+            }
+            else {
+            Log.Add("Download.Commence(): Gathering the download links for " DramaLink
+              . "`n`tDownload type is: " DownloadType
+              . "`n`tOn download finish: " OnFinish)
+            }
+        }
 
+        ; Launch the download links
         SetTimer, CheckFiles, 1000
-
+        runningLinks := 0
+        linearDownloadLinks := []
         launchedEpisodeNumber := 1
+        for episodeNumber, downloadLink in oDownloadLinks {
+            linearDownloadLinks.Push(downloadLink)
+        }
         SetTimer, RunDownloadLinks, 2000
     }
 
@@ -70,9 +84,6 @@ class Download
 
         local global_options := "max-concurrent-downloads=" MAX_CONCURRENT_DWNL    . "`r`n"
                             . "max-overall-download-limit=" DWNLD_SPEED_LIM "K"   . "`r`n"
-                            . "max-connection-per-server=16"                      . "`r`n" ; Hard-coded for now
-                            . "split=16"                                          . "`r`n" ; Hard-coded for now
-                            . "min-split-size=5M"                                 . "`r`n" ; Hard-coded for now
                             . CUSTOM_ARIA_OPTIONS
         , oGlobalOptions := this.Options2obj(global_options)
 
@@ -101,22 +112,23 @@ class Download
         return 1
     }
 
-    pushToAria(oAriaDownloadLinks)
+    ; Pass in a sorted (by episode number) linear array where the values are {fileName:downloadLink} pair
+    pushToAria(pushedDownloadLinks)
     {
         Global
 
-        Run, % "https://" . DRAMA_HOSTNAME . "/?AutodramaIsFinished" ; This will close the main window
+        Helper.closeTabs()
 
         if !IsObject(gidList)
             gidList := []
       
-        TOTAL_DOWNLOADS := oAriaDownloadLinks.Count()
+        TOTAL_DOWNLOADS := pushedDownloadLinks.Count()
         COMPLETED_DOWNLOADS := 0
         FAILED_DOWNLOADS := 0
 
         Log.Add("Download.pushToAria(): Attempting to download " TOTAL_DOWNLOADS " file(s).")
 
-        for key, value in oAriaDownloadLinks
+        for key, value in pushedDownloadLinks
         {
             ; Set file name and download directory
             local addUriOptions := "dir=" . DRAMA_FOLDER . "`n"

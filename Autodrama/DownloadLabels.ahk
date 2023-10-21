@@ -78,15 +78,18 @@ return
 
 RunDownloadLinks:
 	; Timeout for 10 seconds every 5 episodes to avoid error messages
-	if (openEpisodes >= 5) {
+	if (runningLinks >= 5) {
 		Sleep, 10000
-		openEpisodes := 0
+		runningLinks := 0
 	}
 
-	Run, % oDownloadLinks[launchedEpisodeNumber]
-	openEpisodes++
+	Run, % linearDownloadLinks[launchedEpisodeNumber]
+	Log.Add("RunDownloadLinks: Running " . linearDownloadLinks[launchedEpisodeNumber])
+	runningLinks++
 	launchedEpisodeNumber++
 
-	if (launchedEpisodeNumber > oDownloadLinks.Length())
+	if (launchedEpisodeNumber > linearDownloadLinks.Length()) {
 		SetTimer, RunDownloadLinks, Off
+		Log.Add("RunDownloadLinks: Finished running all download links.")	
+	}
 return

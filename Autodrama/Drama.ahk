@@ -64,7 +64,9 @@ class Drama
             Loop % subbedEpisodes
             {
                 RegExMatch(webPage, "O)rel=""noreferrer noopener""\shref=""(\/[^<>]+Episode-" A_Index "\?id=\d+)""", oMatchedLink)
-                oDownloadLinks.Push(baseDomain . oMatchedLink.Value(1) . "?LaunchedByAutodrama")
+
+                ; The array format is: {episodeNumber: downloadLink}
+                oDownloadLinks[A_Index] := baseDomain . oMatchedLink.Value(1) . "?LaunchedByAutodrama"
             }
         }
 
@@ -143,10 +145,8 @@ class Drama
     {
         Global
 
-        SetBatchLines, -1   ; Recommended because ToGrayscale() has a heavy 255-iteration loop
         local hBitMapDramaInfo := LoadPicture("DownloadedImages\kdrama_banner.jpg")
         , hBitMapGrayScl := ToGrayscale(hBitMapDramaInfo)
-        SetBatchLines, 10ms
 
         GuiControl, MainK:, DramaInfoImage, % "HBITMAP:" . hBitMapGrayScl
         return
@@ -155,9 +155,8 @@ class Drama
 
     allLinksUp(oDownloadLinks)
     {
-        Loop % oDownloadLinks.Length()
-        {
-            if !(oDownloadLinks[A_Index]) {
+        for key, value in oDownloadLinks {
+            if !(value) {
                 Log.Add("ERROR: allLinksUp() found an empty download link.")
                 return 0
             }

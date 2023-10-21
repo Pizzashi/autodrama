@@ -44,6 +44,10 @@ class AdvancedSettings
         Gui, AdvSet:Add, Text, x22 y+10, % "Clear search history"
         Gui, AdvSet:Add, Button, x200 yp-2 w100 gClearSearchHistory vClrSearchBtn, % "Clear"
 
+        Gui, AdvSet:Add, Text, x22 y+10, % "Max retries for unavailable links"
+        Gui, AdvSet:Add, Edit, x200 yp-2 w100 number vMaxRetryForLinks, % MAX_RETRIES_FOR_LINKS
+        Gui, AdvSet:Add, Button, x+10 yp+0 w70 vChangeMaxRetriesLinksBtn gChangeMaxRetriesLinks, % "Save"
+
         ;===================Logging===================;
         Gui, Tab, 3 ; Log tab
 

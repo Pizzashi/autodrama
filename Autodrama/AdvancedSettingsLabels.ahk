@@ -14,17 +14,8 @@ SaveDownloadOptions:
     Gui, AdvSet:Submit, NoHide
     GuiControl, AdvSet:, SaveDlOptionsBtn, % "Saving settings..."
 
-    ; Save options to variables
-    CUSTOM_ARIA_OPTIONS     := Trim(StrReplace(CustDlOptns, "`n", "|"), "|")
-    , MOVIE_DOWNLOAD_PATH   := DlDir
-    , MAX_CONCURRENT_DWNL   := MaxConcDl
-    , DWNLD_SPEED_LIM       := DlSpdLim
-
-    ; Save options to disk
-    Config.Write("AppData", "AriaOptions", CUSTOM_ARIA_OPTIONS)
-    Config.Write("AppData", "DownloadPath", MOVIE_DOWNLOAD_PATH)
-    Config.Write("AppData", "MaxDownloads", MAX_CONCURRENT_DWNL)
-    Config.Write("AppData", "SpeedLimit", DWNLD_SPEED_LIM)
+    ; Save options to variables (safe to assign while Aria is running)
+    DWNLD_SPEED_LIM := DlSpdLim
 
     ; If this returns anything, it means Aria is active and must be restarted
     if (aria2.getVersion().result.version)
@@ -39,8 +30,18 @@ SaveDownloadOptions:
         {
             Msgbox, 0, % " Error", % "The download speed limit could not be saved to Aria. Please restart the application for the changes to take effect."
         }
-
     }
+
+    ; Save options to variables (unsafe to assign while Aria is running)
+    CUSTOM_ARIA_OPTIONS     := CustDlOptns
+    , MOVIE_DOWNLOAD_PATH   := DlDir
+    , MAX_CONCURRENT_DWNL   := MaxConcDl
+
+    ; Save options to disk
+    Config.Write("AppData", "AriaOptions", Trim(StrReplace(CUSTOM_ARIA_OPTIONS, "`n", "|"), "|")) ; Store it in a .cfg-friendly format
+    Config.Write("AppData", "DownloadPath", MOVIE_DOWNLOAD_PATH)
+    Config.Write("AppData", "MaxDownloads", MAX_CONCURRENT_DWNL)
+    Config.Write("AppData", "SpeedLimit", DWNLD_SPEED_LIM)
 
     GuiControl, AdvSet:, SaveDlOptionsBtn, % "Options saved!"
     Sleep, 1500
@@ -101,6 +102,18 @@ ClearSearchHistory:
     GuiControl, AdvSet:, ClrSearchBtn, % "Cleared!"
     Sleep, 1500
     GuiControl, AdvSet:, ClrSearchBtn, % "Clear"
+return
+
+ChangeMaxRetriesLinks:
+    Gui, AdvSet:Submit, NoHide
+    if (MAX_RETRIES_FOR_LINKS != MaxRetryForLinks) {
+        MAX_RETRIES_FOR_LINKS := MaxRetryForLinks
+        Config.Write("AppData", "MaxRetriesForUnavailableLinks", MAX_RETRIES_FOR_LINKS)
+    }
+
+    GuiControl, AdvSet:, ChangeMaxRetriesLinksBtn, % "Saved!"
+    Sleep, 1500
+    GuiControl, AdvSet:, ChangeMaxRetriesLinksBtn, % "Save"
 return
 
 ClearPrevLogs:
