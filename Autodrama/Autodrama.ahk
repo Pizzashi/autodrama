@@ -56,20 +56,26 @@ global AUTODRAMA_PID          := ErrorLevel                      ; The script's 
      , LOG_FILEDIR            := A_ScriptDir . "\"               ; The file directory of the log file for the current script instance (i.e. the latest log file)
                               . "Autodrama" "_" A_MMM "_" A_DD "_" A_YYYY ".log"
      ; The variables below are set in advanced settings
-     , DWNLD_SPEED_LIM        := (dwnlSpdLim := Config.Read("AppData", "SpeedLimit"))
-                              ? dwnlSpdLim : 0
-     , MOVIE_DOWNLOAD_PATH    := (movieDwnlPath := Config.Read("AppData", "DownloadPath"))
-                              ? movieDwnlPath : USER_DOWNLOAD_PATH . "\Video\"
-     , MAX_CONCURRENT_DWNL    := (maxConcDwnl := Config.Read("AppData", "MaxDownloads")) 
-                              ? maxConcDwnl : 2
-     , CUSTOM_ARIA_OPTIONS    := Trim(StrReplace(Config.Read("AppData", "AriaOptions"), "|", "`r`n"), "`r`n")
-     , DLEND_NOTIFY_WHO       := (notifyWho := Config.Read("AppData", "NotificationRecipient"))
-                              ? notifyWho : "Daisy"
-     , POP_UP_ONFINISH        := (popUpOnFinish := Config.Read("AppData", "PopUpOnFinish"))
-                              ? popUpOnFinish : "On"
-     , DRAMA_HOSTNAME         := (SiteHostname := Config.Read("AppData", "SiteHostname"))
-                              ? SiteHostname : "kissasian.li"
-
+     ; If StrLen(var) returns false, it means the setting is not set
+     , DWNLD_SPEED_LIM        := StrLen(dwnlSpdLim := Config.Read("AppData", "SpeedLimit"))
+                              ? dwnlSpdLim : Config.Write("AppData", "SpeedLimit", 0)
+     , MOVIE_DOWNLOAD_PATH    := StrLen(movieDwnlPath := Config.Read("AppData", "DownloadPath"))
+                              ? movieDwnlPath : Config.Write("AppData", "DownloadPath", USER_DOWNLOAD_PATH . "\Video\")
+     , MAX_CONCURRENT_DWNL    := StrLen(maxConcDwnl := Config.Read("AppData", "MaxDownloads"))
+                              ? maxConcDwnl : Config.Write("AppData", "MaxDownloads", 2)
+     , DLEND_NOTIFY_WHO       := StrLen(notifyWho := Config.Read("AppData", "NotificationRecipient"))
+                              ? notifyWho : Config.Write("AppData", "NotificationRecipient", "Daisy")
+     , POP_UP_ONFINISH        := StrLen(popUpOnFinish := Config.Read("AppData", "PopUpOnFinish"))
+                              ? popUpOnFinish : Config.Write("AppData", "PopUpOnFinish", "On")
+     , DRAMA_HOSTNAME         := StrLen(SiteHostname := Config.Read("AppData", "SiteHostname"))
+                              ? SiteHostname : Config.Write("AppData", "SiteHostname", "kissasian.lu")
+     , MAX_RETRIES_FOR_LINKS  := StrLen(maxRetries := Config.Read("AppData", "MaxRetriesForUnavailableLinks"))
+                              ? maxRetries : Config.Write("AppData", "MaxRetriesForUnavailableLinks", 3)
+     , CUSTOM_ARIA_OPTIONS    := Trim(StrReplace((StrLen(customAriaOptns := Config.Read("AppData", "AriaOptions")) 
+                              ? customAriaOptns
+                              : Config.Write("AppData", "AriaOptions", "max-connection-per-server=16|split=16|min-split-size=5M|allow-overwrite=true|auto-file-renaming=false"))
+                              , "|", "`r`n"), "`r`n")
+                              
 FileCheck("resources.dll, aria2c.exe")                           ; Check the existence of the required files
 Config.Init()                                                    ; Set up configuration.ini
 Log.Init()                                                       ; Initialize logging
