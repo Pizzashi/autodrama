@@ -27,7 +27,7 @@ function GatherLinks() {
 
 	if (downloadLink == "no_download_link") {
 		// Throw an error, we don't have a download link for an episode
-		SaveToDisk("eFeNotAvail", "err.autodramatext", 1);
+		SaveToDisk("downloadNotAvailable", "err.autodramatext", 1);
 	}
 	else {
 		downloadLink.trigger("onclick");

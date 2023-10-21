@@ -25,7 +25,7 @@ function CheckPageState() {
         }
         else if (versionNotAvail) {
             // Throw an error, we don't have a download link for an episode
-            SaveToDisk("eFeNotAvail", "err.autodramatext", 1);
+            SaveToDisk("downloadNotAvailable", "err.autodramatext", 1);
         }
     }
     else {
