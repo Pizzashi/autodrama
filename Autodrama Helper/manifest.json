@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Autodrama Helper",
-  "version": "0.4.4.3",
+  "version": "0.4.4.4",
   "description": "Helper for Autodrama. Crawls through the sites and grabs the download links.",
   "developer": {
     "name": "Pizzashi",
@@ -94,6 +94,11 @@
     },
     {
       "matches": ["*://kswplayer.info/f/*"],
+      "run_at": "document_idle",
+      "js": ["lib/jquery.js", "lib/savetodisk.js", "sw_downloader.js", "on_error.js"]
+    },
+    {
+      "matches": ["*://streamwish.to/f/*"],
       "run_at": "document_idle",
       "js": ["lib/jquery.js", "lib/savetodisk.js", "sw_downloader.js", "on_error.js"]
     }
